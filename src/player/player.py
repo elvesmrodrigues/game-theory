@@ -56,7 +56,7 @@ class RandomPlayer(Player):
                         adversary_id: str, 
                         available_action: List[str], 
                         adversary_available_action: List[str], 
-                        payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> int:
+                        payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
 
         return available_action[randint(0, len(available_action) - 1)]
 
