@@ -21,8 +21,8 @@ class Player:
     
     def get_action(self, game_type: str, 
                         adversary_id: str,
-                        available_action: List[str], 
-                        adversary_available_action: List[str], 
+                        available_actions: List[str], 
+                        adversary_available_actions: List[str], 
                         payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
 
         '''Retorna a ação do jogador quando ele recebe a matrix de payoff, suas ações disponíveis, etc
@@ -35,7 +35,7 @@ class Player:
                                 action_taken: str, 
                                 available_actions: List[str] , 
                                 action_taken_by_adversary: str, 
-                                adversary_available_action: List[str]) -> None:
+                                adversary_available_actions: List[str]) -> None:
 
         if game_type not in self.memory:
             self.memory[game_type] = dict()
@@ -47,7 +47,7 @@ class Player:
             'action_taken': action_taken,
             'available_actions': available_actions,
             'adversary_action_taken': action_taken_by_adversary,
-            'adversary_available_action': adversary_available_action,
+            'adversary_available_actions': adversary_available_actions,
             'payoff_matrix': payoff_matrix
         })
 
@@ -55,11 +55,11 @@ class Player:
 class RandomPlayer(Player):
     def get_action(self, game_type: str, 
                         adversary_id: str, 
-                        available_action: List[str], 
-                        adversary_available_action: List[str], 
+                        available_actions: List[str], 
+                        adversary_available_actions: List[str], 
                         payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
 
-        return available_action[randint(0, len(available_action) - 1)]
+        return available_actions[randint(0, len(available_actions) - 1)]
 
 if __name__ == '__main__':
     '''
