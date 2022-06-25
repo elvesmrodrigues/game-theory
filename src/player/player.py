@@ -16,6 +16,7 @@ class Player:
             }
         }
         '''
+        self.name = ''        
         self.memory = dict()
     
     def get_action(self, game_type: str, 
