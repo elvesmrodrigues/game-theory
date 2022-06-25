@@ -7,7 +7,7 @@ import re
 def get_player_class_name(path_to_file: Path):
 
     """
-        Given a .py file, returns its class name.
+        Given a .py file, returns its class' name.
 
         It is assumed that the class inherits from Player, 
         i.e. the line with its declaration should be like 
