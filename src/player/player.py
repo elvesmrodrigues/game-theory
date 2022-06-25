@@ -22,7 +22,7 @@ class Player:
                         adversary_id: str,
                         available_action: List[str], 
                         adversary_available_action: List[str], 
-                        payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> int:
+                        payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
 
         '''Retorna a ação do jogador quando ele recebe a matrix de payoff, suas ações disponíveis, etc
         '''
