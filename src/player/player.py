@@ -1,7 +1,9 @@
+from abc import ABC, abstractmethod
+
 from typing import Dict, List, Union
 from random import randint
 
-class Player:
+class Player(ABC):
     def __init__(self) -> None:
         '''
         memory format: 
@@ -19,15 +21,13 @@ class Player:
         self.name = ''        
         self.memory = dict()
     
+    @abstractmethod
     def get_action(self, game_type: str, 
                         adversary_id: str,
                         available_actions: List[str], 
                         adversary_available_actions: List[str], 
                         payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
-
-        '''Retorna a ação do jogador quando ele recebe a matrix de payoff, suas ações disponíveis, etc
-        '''
-        raise NotImplementedError('You must implement your own method')
+        ...
 
     def update_knowledge(self, game_type: str, 
                                 adversary_id: str, 
@@ -51,6 +51,7 @@ class Player:
             'payoff_matrix': payoff_matrix
         })
 
+    
 # Classe apenas de exemplo
 class RandomPlayer(Player):
     def get_action(self, game_type: str, 
@@ -105,3 +106,7 @@ if __name__ == '__main__':
 
     print(f'Payoff of player row: {payoff_matrix[action_player_1][action_player_2]}')
     print(f'Payoff of player col: {payoff_matrix[action_player_2][action_player_1]}')
+
+    random_player_1.update_knowledge('test', None, payoff_matrix, '', None, None, None)
+
+    print(random_player_1.memory)
