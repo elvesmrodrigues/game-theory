@@ -1,10 +1,10 @@
-from typing import List
-from pathlib import Path
-
 import re
 
+from pathlib import Path
 
-def get_player_class_name(path_to_file: Path):
+
+
+def get_player_class_name(path_to_file: Path) -> str:
 
     """
         Given a .py file, returns its class' name.
