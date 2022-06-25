@@ -9,7 +9,7 @@ def get_player_class_name(path_to_file: Path):
     """
         Given a .py file, returns its class name.
 
-        It is assumed that the class is inheriting from Player, 
+        It is assumed that the class inherits from Player, 
         i.e. the line with its definition should be like 
         "class <CLASS_NAME><some_spaces_maybe>(Player)<rest>".
     """
