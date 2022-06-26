@@ -52,8 +52,8 @@ if __name__ == '__main__':
     random_player_1 = RandomPlayer()
     random_player_2 = RandomPlayer()
 
-    player_row_available_action = ['R0', 'R1']
-    player_col_available_action = ['C0', 'C1']
+    player_row_available_action = ('R0', 'R1')
+    player_col_available_action = ('C0', 'C1')
 
     action_player_1 = random_player_1.get_action('test', None, player_row_available_action, player_col_available_action, payoff_matrix)
     action_player_2 = random_player_2.get_action('test', None, player_col_available_action, player_row_available_action, payoff_matrix)
