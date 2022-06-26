@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List, Optional, Set, Type
 from types import ModuleType
 
-from . import Player
+from .player import Player
 
 
 PATH_PLAYERS = Path("src/player/")

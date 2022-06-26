@@ -1,4 +1,4 @@
-from . import Player
+from .player import Player
 
 from typing import Dict, Tuple, Union
 from random import randint
