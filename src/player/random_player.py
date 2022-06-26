@@ -5,6 +5,8 @@ from random import randint
 
 
 class RandomPlayer(Player):
+
+    
     def get_action(self, game_type: str, 
                         adversary_id: str, 
                         available_actions: List[str], 
