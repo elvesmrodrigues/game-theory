@@ -1,16 +1,16 @@
 from player import Player
 
-from typing import Dict, List, Union
+from typing import Dict, Tuple, Union
 from random import randint
 
 
 class RandomPlayer(Player):
 
-    
+
     def get_action(self, game_type: str, 
                         adversary_id: str, 
-                        available_actions: List[str], 
-                        adversary_available_actions: List[str], 
+                        available_actions: Tuple[str], 
+                        adversary_available_actions: Tuple[str], 
                         payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
 
         return available_actions[randint(0, len(available_actions) - 1)]

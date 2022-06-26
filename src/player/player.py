@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from typing import Dict, List, Union
+from typing import Dict, Tuple, Union
 
 class Player(ABC):
     def __init__(self) -> None:
@@ -23,8 +23,8 @@ class Player(ABC):
     @abstractmethod
     def get_action(self, game_type: str, 
                         adversary_id: str,
-                        available_actions: List[str], 
-                        adversary_available_actions: List[str], 
+                        available_actions: Tuple[str], 
+                        adversary_available_actions: Tuple[str], 
                         payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
         ...
 
@@ -32,9 +32,9 @@ class Player(ABC):
                                 adversary_id: str, 
                                 payoff_matrix: Dict[str, Dict[str, Union[float, int]]], 
                                 action_taken: str, 
-                                available_actions: List[str] , 
+                                available_actions: Tuple[str], 
                                 action_taken_by_adversary: str, 
-                                adversary_available_actions: List[str]) -> None:
+                                adversary_available_actions: Tuple[str]) -> None:
 
         if game_type not in self.memory:
             self.memory[game_type] = dict()
