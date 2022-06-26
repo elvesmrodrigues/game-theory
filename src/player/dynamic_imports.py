@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List, Optional, Set, Type
 from types import ModuleType
 
-from player import Player
+from . import Player
 
 
 PATH_PLAYERS = Path("src/player/")
@@ -64,7 +64,7 @@ def _get_filenames(path_to_folder: Path) -> List[Path]:
     (_, _, filenames) = next(walk(path_to_folder))
 
     if not _are_filenames_unique(filenames):
-        raise Exception("Some of the provided files have the same name.")
+        raise RuntimeError("Some of the provided files have the same name.")
 
     filenames = [Path(file) for file in sorted(filenames)]
 
