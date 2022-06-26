@@ -12,5 +12,5 @@ class EmptyClass (Player):
                         adversary_available_actions: List[str], 
                         payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
                         
-        print("Method exists!")
+        return ""
                 
