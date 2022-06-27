@@ -1,7 +1,7 @@
 from .player import Player
 
 from typing import Dict, Tuple, Union
-from random import randint
+from random import choice
 
 
 class RandomPlayer(Player):
@@ -13,7 +13,7 @@ class RandomPlayer(Player):
                         adversary_available_actions: Tuple[str], 
                         payoff_matrix: Dict[str, Dict[str, Union[float, int]]]) -> str:
 
-        return available_actions[randint(0, len(available_actions) - 1)]
+        return choice(available_actions)
 
 
 if __name__ == '__main__':
