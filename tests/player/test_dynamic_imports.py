@@ -1,6 +1,5 @@
-from fileinput import filename
-from struct import pack
 import pytest
+
 import src.player.dynamic_imports as di
 
 from pathlib import Path
