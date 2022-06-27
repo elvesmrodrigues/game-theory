@@ -1,0 +1,2 @@
+class EmptyTemplate:
+    pass

@@ -2,6 +2,7 @@ import re
 
 from os import walk
 from pathlib import Path
+from importlib import import_module
 
 from typing import List, Optional, Set, Type
 from types import ModuleType
@@ -35,7 +36,21 @@ def _get_player_class_name(path_to_file: Path) -> str:
         raise NameError("No class has been found.")
 
 
-def create_class_instance_from_file(path_to_file: Path) -> Player:
+def import_class_from_from_file(
+    filename: str, class_name: str, package: str
+) -> Type:
+    
+    module: ModuleType = import_module(
+        "." + filename.strip(".py"), package
+    )
+    class_: Type = getattr(module, class_name)
+
+    return class_
+
+
+def create_player_class_instance_from_file(
+    path_to_file: Path, package: str
+) -> Player:
 
     """
         Given a .py file, create an instance of its class.
@@ -48,11 +63,10 @@ def create_class_instance_from_file(path_to_file: Path) -> Player:
     filename: str = path_to_file.name
     class_name: str = _get_player_class_name(path_to_file)
 
-    module: ModuleType = __import__(filename.strip(".py"))
-    class_: Type[Player] = getattr(module, class_name)
-    instance: Player = class_()
-
-    return instance
+    class_: Type[Player] = import_class_from_from_file(
+        filename, class_name, package
+    )
+    return class_()
 
 
 def _are_filenames_unique(filenames: List[str]):
@@ -71,13 +85,14 @@ def _get_filenames(path_to_folder: Path) -> List[Path]:
     return filenames
 
 
-def create_class_instance_entire_folder(
+def create_player_class_instance_entire_folder(
     path_to_folder: Path = Path("src/player/"), 
     filenames_to_exclude: Set[Path] = {
         Path("__init__.py"),
         Path("player.py"),
         Path("dynamic_imports.py")
-    }
+    },
+    package: str = "src.player"
 ) -> List[Player]:
 
     """
@@ -97,50 +112,9 @@ def create_class_instance_entire_folder(
 
     if filenames is not None:
         return [
-            create_class_instance_from_file(path_to_folder / file) 
+            create_player_class_instance_from_file(path_to_folder / file, package) 
             for file in filenames
             if file not in filenames_to_exclude
         ]
         
     return []
-
-
-if __name__ == "__main__":
-
-    test_path: Path = PATH_PLAYERS / Path("./test_class.py")
-
-    print(f"Function: {_get_player_class_name(test_path)}\nExpected: TestClass")
-
-
-    test_class_instance: Player = create_class_instance_from_file(test_path)
-    
-    test_class_instance.get_action(
-        game_type = "",
-        adversary_id = "",
-        available_actions = [],
-        adversary_available_actions = [],
-        payoff_matrix = dict()
-    )
-
-
-    test_and_random_class: List[Player] = create_class_instance_entire_folder(
-        PATH_PLAYERS
-    )
-
-    print(
-        test_and_random_class[0].get_action(
-            game_type = "",
-            adversary_id = "",
-            available_actions = ["R0", "R1"],
-            adversary_available_actions = [],
-            payoff_matrix = dict()
-        )
-    )
-
-    test_and_random_class[1].get_action(
-        game_type = "",
-        adversary_id = "",
-        available_actions = [],
-        adversary_available_actions = [],
-        payoff_matrix = dict()
-    )
