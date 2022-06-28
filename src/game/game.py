@@ -1,36 +1,66 @@
-import re
-from typing import List, Tuple, Union
-from typing_extensions import Literal
+from typing import List, Union
 
-from player import Player
+from src.player.player import Player
+
+
+PayoffType = List[List[Union[float, int]]]
+
 
 class Game:
-    def __init__(self, game_type: str, player_row_payoff_matrix: List[List[Union[float, int]]], player_col_payoff_matrix: List[List[Union[float, int]]]) -> None:
+
+
+    def __init__(self, 
+        game_id: int,
+        game_type: str, 
+        player_row_payoff_matrix: PayoffType, 
+        player_col_payoff_matrix: PayoffType
+    ) -> None:
+        
+        self.id = game_id
         self.type = game_type
-
         self.payoff_matrix = dict()
-        for row in range(len(player_row_payoff_matrix)):
-            self.payoff_matrix[f'R{row}'] = dict()
-            for col in range(len(player_row_payoff_matrix[0])):
-                self.payoff_matrix[f'C{col}'] = player_row_payoff_matrix[row][col]
+        self.row_actions = list()
+        self.col_actions = list()
 
-                if f'C{col}' not in self.payoff_matrix:
-                    self.payoff_matrix[f'C{col}'] = dict()
-                
-                self.payoff_matrix[f'C{col}'][f'R{row}'] = player_col_payoff_matrix[row][col]
+        for row, (row_payoffs, col_payoffs) in enumerate(zip(player_row_payoff_matrix, player_col_payoff_matrix)):
+            
+            row_action = f'R{row}'
+            self.row_actions.append(row_action)
 
-    def play(self, player_row: Player, player_col: Player) -> Tuple[Union[float, int], Union[float, int]]:
-        player_row_action = player_row.get_action(self.type, 
-                                                self.player_row_available_actions, 
-                                                self.player_col_available_actions, 
-                                                self.player_row_payoff_matrix, 
-                                                self.player_col_payoff_matrix)
+            for col, (row_payoff, col_payoff) in enumerate(zip(row_payoffs, col_payoffs)):
 
-        player_col_action = player_col.get_action(self.type, 
-                                                self.player_col_available_actions,
-                                                self.player_row_available_actions,
-                                                self.player_col_payoff_matrix,
-                                                self.player_row_payoff_matrix)
+                col_action = f'C{col}'
+                self.col_actions.append(col_action)
+
+                self.payoff_matrix[(row_action, col_action)] = row_payoff
+                self.payoff_matrix[(col_action, row_action)] = col_payoff
+
+        self.row_actions = tuple(self.row_actions)
+        self.col_actions = tuple(self.col_actions)
+
+
+    def play(self, player_row: Player, player_col: Player) -> None:
+
+        row_action = player_row.get_action(
+            self.type, self.payoff_matrix,
+            player_col, self.row_actions, self.col_actions
+        )
+
+        col_action = player_col.get_action( 
+            self.type, self.payoff_matrix,
+            player_row, self.col_actions, self.row_actions
+        )
+
+        player_row.update_knowledge(
+            self.id, player_col, self.row_actions, 
+            row_action, col_action
+        )
+
+        player_col.update_knowledge(
+            self.id, player_row, self.col_actions,
+            col_action, row_action
+        )
+
 
     
 if __name__ == '__main__':
@@ -46,4 +76,4 @@ if __name__ == '__main__':
 
     game = Game('test', player_row_payoff_matrix, player_col_payoff_matrix)
 
-    print(game.get_payoff('row', 1, 1))
+    #print(game.get_payoff('row', 1, 1))
