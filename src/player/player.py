@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 
 PayoffMatrixType = Dict[str, Dict[str, Union[float, int]]]
-MemoryKey = Tuple[int, str, Tuple[str, ...]]
+MemoryKey = Union[Tuple[int, str, str], Tuple[int, str]]
 MatchHistoryType = List[Tuple[str, str]]
 
 class Player(ABC):
@@ -27,34 +27,56 @@ class Player(ABC):
         game_type: str, 
         payoff_matrix: PayoffMatrixType,
         adversary_id: str,
-        available_actions: Tuple[str, ...],
-        adversary_available_actions: Tuple[str, ...]
+        row_or_col: str
     ) -> str:
         ...
 
 
-    def get_match_history(
-        self, 
+    def __create_key(
+        self,
+        game_symmetric: bool,
         game_id: int, 
         adversary_id: str, 
-        available_actions: Tuple[str, ...]
+        row_or_col: str
+    ) -> MemoryKey:
+
+        if game_symmetric:
+            return (game_id, adversary_id)
+
+        return (game_id, adversary_id, row_or_col)
+
+
+
+    def get_match_history(
+        self, 
+        game_symmetric: bool,
+        game_id: int, 
+        adversary_id: str, 
+        row_or_col: str
     ) -> Optional[MatchHistoryType]:
 
-        key: MemoryKey = (game_id, adversary_id, available_actions)
+        key = self.__create_key(
+            game_symmetric, game_id, 
+            adversary_id, row_or_col
+        )
 
         return self.memory.get(key, None)
 
 
     def update_knowledge(
         self, 
+        game_symmetric: bool,
         game_id: int,
         adversary_id: str,
-        available_actions: Tuple[str, ...], 
+        row_or_col: str,
         action: str, 
         adversary_action: str
     ) -> None:
 
-        key: MemoryKey = (game_id, adversary_id, available_actions)
+        key = self.__create_key(
+            game_symmetric, game_id, 
+            adversary_id, row_or_col
+        )
         
         if key not in self.memory:
             self.memory[key] = list()
