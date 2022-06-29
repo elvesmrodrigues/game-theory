@@ -68,3 +68,10 @@ def adv_defect_last_match():
         {"all": [(None, Action.DEFECT.value)]},
         {"all": [(None, None), (None, None), (None, Action.DEFECT.value)]}
     ]
+
+@pytest.fixture(scope="function")
+def both_cooperate_last_match():
+    return [
+        {"all": [(Action.COOPERATE.value, Action.COOPERATE.value)]},
+        {"all": [(None, None), (None, None), (Action.COOPERATE.value, Action.COOPERATE.value)]}
+    ]
