@@ -55,7 +55,7 @@ def payoff_stag_hunt():
 @pytest.fixture(scope="function")
 def payoff_hawk_dove():
     return (
-        ((0,0), (5,1)),
-        ((1,5), (3,3))
+        ((3,3), (1,5)),
+        ((5,1), (0,0))
     )
 
