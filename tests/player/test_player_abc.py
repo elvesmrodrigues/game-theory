@@ -3,7 +3,7 @@ from src.player.player import Player, PayoffMatrixType, MatchHistoryType
 
 from typing import Tuple, Dict, Union, Optional
 
-PlayerFuncParam = Union[str, Tuple[str], Dict[str, Dict[str, Union[float, int]]]]
+PlayerFuncParam = Union[str, Tuple[str], Dict[str, Dict[str, Union[None, float, int, Dict]]]]
 
 
 class EmptyClass (Player):
