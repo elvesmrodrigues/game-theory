@@ -4,8 +4,8 @@ from src.player.player import Player, MatchHistory, PayoffMatrix
 
 
 class Action(Enum):
-    COOPERATE = 0
-    DEFECT = 1
+    COOPERATE: int = 0
+    DEFECT: int = 1
 
 
 class TitForTat(Player):
@@ -26,7 +26,7 @@ class TitForTat(Player):
     ) -> int:
 
         if match_history is None:
-            return Action.COOPERATE
+            return Action.COOPERATE.value
         
         _, adversary_previous_action = match_history[row_or_col][-1]
         return adversary_previous_action
