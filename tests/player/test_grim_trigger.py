@@ -84,17 +84,35 @@ def test_grim_trigger_empty_payoffs_defect(
         )
 
 
-def test_grim_trigger_empty_payoffs_both_coop(
-    empty_params_payoff_also: PlayerFuncParam,
+def test_grim_trigger_arbitrary_matrices_first_match(
+    arbitrary_payoff_matrices: PayoffMatrix,
+    empty_params: PlayerFuncParam,
+    empty_match_history: PlayerFuncParam,
+    grim_trigger: GrimTrigger
+) -> None:
+
+    for payoff_matrix in arbitrary_payoff_matrices:
+        assert Action.COOPERATE.value == grim_trigger.get_action(
+            payoff_matrix = payoff_matrix,
+            match_history = empty_match_history,
+            **empty_params
+        )
+
+
+def test_grim_trigger_arbitrary_matrices_both_coop(
+    arbitrary_payoff_matrices: PayoffMatrix,
+    empty_params: PlayerFuncParam,
     both_cooperate_last_match: PlayerFuncParam,
     grim_trigger: GrimTrigger
 ) -> None:
 
     for match_history in both_cooperate_last_match:
-        assert Action.COOPERATE.value == grim_trigger.get_action(
-            match_history = match_history,
-            **empty_params_payoff_also
-        )
+        for payoff_matrix in arbitrary_payoff_matrices:
+            assert Action.COOPERATE.value == grim_trigger.get_action(
+                payoff_matrix = payoff_matrix,
+                match_history = match_history,
+                **empty_params
+            )
 
 
 def test_grim_trigger_arbitrary_matrices_adv_defect(

@@ -71,6 +71,21 @@ def test_tit_for_tat_empty_payoffs_defect(
         )
 
 
+def test_tit_for_tat_arbitrary_matrices_first_match(
+    arbitrary_payoff_matrices: PayoffMatrix,
+    empty_params: PlayerFuncParam,
+    empty_match_history: PlayerFuncParam,
+    tit_for_tat: TitForTat
+) -> None:
+
+    for payoff_matrix in arbitrary_payoff_matrices:
+        assert Action.COOPERATE.value == tit_for_tat.get_action(
+            payoff_matrix = payoff_matrix,
+            match_history = empty_match_history,
+            **empty_params
+        )
+
+
 def test_tit_for_tat_arbitrary_matrices_cooperate(
     arbitrary_payoff_matrices: PayoffMatrix,
     empty_params: PlayerFuncParam,
