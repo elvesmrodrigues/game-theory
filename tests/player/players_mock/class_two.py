@@ -1,6 +1,6 @@
-from .empty_template import EmptyTemplate
+from .empty_template import Player
 
-class ClassTwo(EmptyTemplate):
+class ClassTwo(Player):
     
     def function(self) -> int:
         return 2

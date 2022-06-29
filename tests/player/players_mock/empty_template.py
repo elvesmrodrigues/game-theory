@@ -1,2 +1,2 @@
-class EmptyTemplate:
+class Player:
     pass

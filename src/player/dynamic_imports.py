@@ -23,7 +23,7 @@ def _get_player_class_name(path_to_file: Path) -> str:
         "class <CLASS_NAME><some_spaces_maybe>(Player)<rest>".
     """
 
-    regex_pattern = re.compile(r"class\s*(?P<class_name>.+?)\s*\(")
+    regex_pattern = re.compile(r"class\s*(?P<class_name>.+?)\s*\(Player\)")
 
     with path_to_file.open("r") as file:
 
