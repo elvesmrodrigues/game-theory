@@ -1,49 +1,148 @@
-import re
+import json
+
+from pathlib import Path
+from dataclasses import dataclass
+
 from typing import List, Tuple, Union
-from typing_extensions import Literal
 
-from player import Player
 
+Number = Union[float, int]
+JsonPayoffMatrix = List[List[List[Number]]]
+PayoffMatrix = Tuple[Tuple[Tuple[Number, ...], ...], ...]
+
+
+@dataclass(frozen=True)
 class Game:
-    def __init__(self, game_type: str, player_row_payoff_matrix: List[List[Union[float, int]]], player_col_payoff_matrix: List[List[Union[float, int]]]) -> None:
-        self.type = game_type
 
-        self.payoff_matrix = dict()
-        for row in range(len(player_row_payoff_matrix)):
-            self.payoff_matrix[f'R{row}'] = dict()
-            for col in range(len(player_row_payoff_matrix[0])):
-                self.payoff_matrix[f'C{col}'] = player_row_payoff_matrix[row][col]
+    """
+    Dataclass with all important information about a game.
+    """
 
-                if f'C{col}' not in self.payoff_matrix:
-                    self.payoff_matrix[f'C{col}'] = dict()
+    id: int
+    type: str
+    symmetric: bool
+    payoff_row: PayoffMatrix
+    payoff_col: PayoffMatrix
+
+
+def nested_list_to_nested_tuple(lists: List) -> Tuple:
+
+    """
+    Given a nested list, it returns an equivalent nested tuple.
+    """
+
+    return tuple(
+        nested_list_to_nested_tuple(lst) 
+        if isinstance(lst, list) 
+        else lst 
+        for lst in lists
+    )
+
+
+def transpose_list_of_lists(lists: List) -> List:
+
+    """
+    Given a list of lists, it returns its transpose (still a list of lists).
+    """
+
+    return list(map(list, zip(*lists)))
+
+
+class GameFactoryFromJson:
+
+    def __init__(self, json_filepath: Path) -> None:
+
+        """
+        Given a filepath to a .json file, it constructs a Game.
+        """
+
+        with open(json_filepath, "r") as file:
+            self.json_dict = json.load(file)
+
+
+    def __invert_row_col_payoffs_order(self, transposed_row: JsonPayoffMatrix) -> None:
+        
+        """
+        It inverts payoffs ordering.
+
+        Example:
+            Input:
+
+                [
+                    [[1,2], [2,3]],
+                    [[3,4], [4,5]]
+                ]
+                 
+            Output:
                 
-                self.payoff_matrix[f'C{col}'][f'R{row}'] = player_col_payoff_matrix[row][col]
+                [
+                    [[2,1], [3,2]],
+                    [[4,3], [5,4]]
+                ]
 
-    def play(self, player_row: Player, player_col: Player) -> Tuple[Union[float, int], Union[float, int]]:
-        player_row_action = player_row.get_action(self.type, 
-                                                self.player_row_available_actions, 
-                                                self.player_col_available_actions, 
-                                                self.player_row_payoff_matrix, 
-                                                self.player_col_payoff_matrix)
+        """
 
-        player_col_action = player_col.get_action(self.type, 
-                                                self.player_col_available_actions,
-                                                self.player_row_available_actions,
-                                                self.player_col_payoff_matrix,
-                                                self.player_row_payoff_matrix)
+        for action_payoffs in transposed_row:
+            for payoffs in action_payoffs:
+                payoffs.reverse()
 
-    
+
+    def _convert_payoff_row_to_col(self) -> PayoffMatrix:
+
+        """
+        Given a payoff matrix, it constructs and returns a payoff 
+        matrix with the col player as the row one.
+
+        Example:
+            Input:
+                               Col
+                            0      1                    
+                        ( 
+                Row  0    ((1,2), (3,4)),
+                     1    ((5,6), (7,8))
+                        )
+
+            Output:
+                               Row
+                            0      1                    
+                        ( 
+                Col  0    ((2,1), (6,5)),
+                     1    ((4,3), (8,7))
+                        )
+        """
+
+        transposed_row: JsonPayoffMatrix = transpose_list_of_lists(self.json_dict["payoff_matrix"])
+
+        self.__invert_row_col_payoffs_order(transposed_row)
+
+        return nested_list_to_nested_tuple(transposed_row)
+
+
+    def create_game(self):
+        
+        """
+        It creates the game from data inside .json file.
+        """
+
+        payoff_row: PayoffMatrix = nested_list_to_nested_tuple(
+            self.json_dict["payoff_matrix"]
+        )
+
+        payoff_col: PayoffMatrix = self._convert_payoff_row_to_col()
+
+        return Game(
+            id = self.json_dict["id"],
+            type = self.json_dict["type"],
+            symmetric = (payoff_row == payoff_col),
+            payoff_row = payoff_row,
+            payoff_col = payoff_col
+        )
+   
+
 if __name__ == '__main__':
-    player_row_payoff_matrix = [
-        [1, 2],
-        [4, 7]
-    ]
-    
-    player_col_payoff_matrix = [
-        [4, 8],
-        [9, 0]
-    ]
 
-    game = Game('test', player_row_payoff_matrix, player_col_payoff_matrix)
+    game = GameFactoryFromJson("src/game/game_test_asym.json").create_game() 
+    print(game)
 
-    print(game.get_payoff('row', 1, 1))
+    game = GameFactoryFromJson("src/game/game_test_sym.json").create_game() 
+    print(game)
