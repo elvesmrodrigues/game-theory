@@ -121,7 +121,7 @@ class GameFactoryFromJson:
     def create_game(self):
         
         """
-        It creates the game from the data inside the .json file.
+        It creates the game from data inside .json file.
         """
 
         payoff_row: PayoffMatrix = nested_list_to_nested_tuple(
