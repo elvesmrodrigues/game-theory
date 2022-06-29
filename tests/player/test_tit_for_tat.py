@@ -33,7 +33,7 @@ def empty_params_payoff_also() -> Dict[str, PlayerFuncParam]:
     }
 
 
-def test_always_zero_all_empty(
+def test_tit_for_tat_all_empty(
     empty_params_payoff_also: PlayerFuncParam,
     empty_match_history: PlayerFuncParam,
     tit_for_tat: TitForTat
@@ -45,7 +45,7 @@ def test_always_zero_all_empty(
     )
 
 
-def test_always_zero_empty_payoffs_cooperate(
+def test_tit_for_tat_empty_payoffs_cooperate(
     empty_params_payoff_also: PlayerFuncParam,
     adv_cooperate_last_match: PlayerFuncParam,
     tit_for_tat: TitForTat
@@ -58,7 +58,7 @@ def test_always_zero_empty_payoffs_cooperate(
         )
 
 
-def test_always_zero_empty_payoffs_defect(
+def test_tit_for_tat_empty_payoffs_defect(
     empty_params_payoff_also: PlayerFuncParam,
     adv_defect_last_match: PlayerFuncParam,
     tit_for_tat: TitForTat
@@ -71,7 +71,7 @@ def test_always_zero_empty_payoffs_defect(
         )
 
 
-def test_always_zero_arbitrary_matrices_cooperate(
+def test_tit_for_tat_arbitrary_matrices_cooperate(
     arbitrary_payoff_matrices: PayoffMatrix,
     empty_params: PlayerFuncParam,
     adv_cooperate_last_match: PlayerFuncParam,
@@ -87,7 +87,7 @@ def test_always_zero_arbitrary_matrices_cooperate(
             )
 
 
-def test_always_zero_arbitrary_matrices_defect(
+def test_tit_for_tat_arbitrary_matrices_defect(
     arbitrary_payoff_matrices: PayoffMatrix,
     empty_params: PlayerFuncParam,
     adv_defect_last_match: PlayerFuncParam,
