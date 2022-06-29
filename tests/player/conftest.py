@@ -75,3 +75,10 @@ def both_cooperate_last_match():
         {"all": [(Action.COOPERATE.value, Action.COOPERATE.value)]},
         {"all": [(None, None), (None, None), (Action.COOPERATE.value, Action.COOPERATE.value)]}
     ]
+
+@pytest.fixture(scope="function")
+def coop_defect_last_match():
+    return [
+        {"all": [(Action.COOPERATE.value, Action.DEFECT.value)]},
+        {"all": [(None, None), (None, None), (Action.COOPERATE.value, Action.DEFECT.value)]}
+    ]
