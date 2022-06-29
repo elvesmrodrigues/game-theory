@@ -208,7 +208,7 @@ class Player(ABC):
         
         self.match_history[key]["all"].append(actions)
 
-        if game_symmetric:
+        if not game_symmetric:
             self.match_history[key][row_or_col].append(actions)
 
 
