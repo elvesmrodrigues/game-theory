@@ -13,12 +13,13 @@ class Player(ABC):
 
     def __init__(self) -> None:
         '''
-            Initializes Player Class.
+            It initializes Player Class.
                 - Your implementation should inherit from this.
-                - You should define a name (id) to uniquely identify it.
-                  Just hardcode it down here.
-        '''
-        self.name = ''        
+                - You should define a self.name variable (id) to uniquely 
+                  identify it. Just copy this __init__ method inside your
+                  descendant-class and hardcode it there.
+        ''' 
+        self.name = "Insert your implementation's name here"
         self.match_history = dict()
     
 
@@ -175,7 +176,7 @@ class Player(ABC):
     ) -> None:
         
         """
-        It create match_history dictionary.
+        It creates match_history dictionary.
         You should not use or change this function.
         """
 
@@ -200,7 +201,7 @@ class Player(ABC):
     ) -> None:
 
         """
-        Update match_history dictionary.
+        It updates match_history dictionary.
         You should not use or change this function.
         """
         actions: Tuple[int, int] = (action, adversary_action)
@@ -222,7 +223,7 @@ class Player(ABC):
     ) -> None:
 
         """
-        Create (if necessary) and update match_history dictionary.
+        It creates (if necessary) and updates match_history dictionary.
         You should not use or change this function.
         """
 
