@@ -5,8 +5,6 @@ from src.player.random_player import RandomPlayer
 
 from typing import Dict, List, Optional, Union
 
-from tests.player.conftest import payoff_hawk_dove
-
 
 PlayerFuncParam = Union[str, PayoffMatrix, Optional[MatchHistory]]
 
