@@ -53,7 +53,7 @@ class Player(ABC):
                                     0      1                    
                                 ( 
                         Row  0    ((1,2), (3,4)),
-                                1    ((5,6), (7,8))
+                             1    ((5,6), (7,8))
                                 )
 
                     If you were the row player, you would receive
@@ -66,7 +66,7 @@ class Player(ABC):
                                     0      1                    
                                 ( 
                         Col  0    ((2,1), (6,5)),
-                                1    ((4,3), (8,7))
+                             1    ((4,3), (8,7))
                                 )
 
                     Simply put, you can implement the function as though
