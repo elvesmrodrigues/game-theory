@@ -24,77 +24,27 @@ def empty_params() -> Dict[str, PlayerFuncParam]:
     }
 
 
-def test_always_zero_one_one(
-    payoff_matrix_one_one: PayoffMatrix,
+def test_always_zero_arbitraty_matrices(
+    arbitrary_payoff_matrices: PayoffMatrix,
     empty_params: PlayerFuncParam,
     always_zero: AlwaysActionZero
 ) -> None:
 
-    
-    assert 0 == always_zero.get_action(
-        payoff_matrix = payoff_matrix_one_one,
-        **empty_params
-    )
+    for payoff_matrix in arbitrary_payoff_matrices:
+        assert 0 == always_zero.get_action(
+            payoff_matrix = payoff_matrix,
+            **empty_params
+        )
 
 
-def test_always_zero_one_two(
-    payoff_matrix_one_two: PayoffMatrix,
+def test_always_zero_common_two_by_two(
+    common_two_by_two_games: PayoffMatrix,
     empty_params: PlayerFuncParam,
     always_zero: AlwaysActionZero
 ) -> None:
 
-    
-    assert 0 == always_zero.get_action(
-        payoff_matrix = payoff_matrix_one_two,
-        **empty_params
-    )
-
-
-def test_always_zero_two_one(
-    payoff_matrix_two_one: PayoffMatrix, 
-    empty_params: PlayerFuncParam,
-    always_zero: AlwaysActionZero
-) -> None:
-
-    
-    assert 0 == always_zero.get_action(
-        payoff_matrix = payoff_matrix_two_one,
-        **empty_params
-    )
-
-
-def test_always_zero_two_two(
-    payoff_matrix_two_two: PayoffMatrix, 
-    empty_params: PlayerFuncParam,
-    always_zero: AlwaysActionZero
-) -> None:
-
-    
-    assert 0 == always_zero.get_action(
-        payoff_matrix = payoff_matrix_two_two,
-        **empty_params
-    )
-
-def test_always_zero_three_two(
-    payoff_matrix_three_two: PayoffMatrix, 
-    empty_params: PlayerFuncParam,
-    always_zero: AlwaysActionZero
-) -> None:
-
-    
-    assert 0 == always_zero.get_action(
-        payoff_matrix = payoff_matrix_three_two,
-        **empty_params
-    )   
-
-def test_always_zero_three_three(
-    payoff_matrix_three_three: PayoffMatrix, 
-    empty_params: PlayerFuncParam,
-    always_zero: AlwaysActionZero
-) -> None:
-
-    
-    assert 0 == always_zero.get_action(
-        payoff_matrix = payoff_matrix_three_three,
-        **empty_params
-    )
+    for payoff_matrix in common_two_by_two_games:
+        assert 0 == always_zero.get_action(
+            payoff_matrix = payoff_matrix,
+            **empty_params
+        )

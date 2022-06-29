@@ -1,3 +1,4 @@
+from codecs import ascii_encode
 import pytest
 
 from src.player.player import PayoffMatrix, MatchHistory
@@ -24,82 +25,46 @@ def empty_params() -> Dict[str, PlayerFuncParam]:
     }
 
 
-def test_random_player_one_one(
-    payoff_matrix_one_one: PayoffMatrix,
+def test_random_player_arbitraty_matrices(
+    arbitrary_payoff_matrices: PayoffMatrix,
     empty_params: PlayerFuncParam,
     random_player: RandomPlayer
 ) -> None:
 
-    for _ in range(30):
-        assert 0 == random_player.get_action(
-            payoff_matrix = payoff_matrix_one_one,
-            **empty_params
-        )
+    for payoff_matrix in arbitrary_payoff_matrices[:2]:
+        for _ in range(30):
+            assert 0 == random_player.get_action(
+                payoff_matrix = payoff_matrix,
+                **empty_params
+            )
+
+    for payoff_matrix in arbitrary_payoff_matrices[2:4]:
+        for _ in range(30):
+            action: int = random_player.get_action(
+                payoff_matrix = payoff_matrix,
+                **empty_params
+            )
+            assert action in [0,1]
+
+    for payoff_matrix in arbitrary_payoff_matrices[4:]:
+        for _ in range(30):
+            action: int = random_player.get_action(
+                payoff_matrix = payoff_matrix,
+                **empty_params
+            )
+            assert action in [0,1,2]
 
 
-def test_random_player_one_two(
-    payoff_matrix_one_two: PayoffMatrix,
+def test_random_player_common_two_by_two(
+    common_two_by_two_games: PayoffMatrix,
     empty_params: PlayerFuncParam,
     random_player: RandomPlayer
 ) -> None:
 
-    for _ in range(30):
-        assert 0 == random_player.get_action(
-            payoff_matrix = payoff_matrix_one_two,
-            **empty_params
-        )
-
-
-def test_random_player_two_one(
-    payoff_matrix_two_one: PayoffMatrix, 
-    empty_params: PlayerFuncParam,
-    random_player: RandomPlayer
-) -> None:
-
-    for _ in range(30):
-        action: int =  random_player.get_action(
-            payoff_matrix = payoff_matrix_two_one,
-            **empty_params
-        )
-        assert action in [0,1]
-
-
-def test_random_player_two_two(
-    payoff_matrix_two_two: PayoffMatrix, 
-    empty_params: PlayerFuncParam,
-    random_player: RandomPlayer
-) -> None:
-
-    for _ in range(30):
-        action: int =  random_player.get_action(
-            payoff_matrix = payoff_matrix_two_two,
-            **empty_params
-        )
-        assert action in [0,1]
-
-
-def test_random_player_three_two(
-    payoff_matrix_three_two: PayoffMatrix, 
-    empty_params: PlayerFuncParam,
-    random_player: RandomPlayer
-) -> None:
-
-    for _ in range(30):
-        action: int =  random_player.get_action(
-            payoff_matrix = payoff_matrix_three_two,
-            **empty_params
-        )
-        assert action in [0,1,2]
-
-def test_random_player_three_three(
-    payoff_matrix_three_three: PayoffMatrix, 
-    empty_params: PlayerFuncParam,
-    random_player: RandomPlayer
-) -> None:
-
-    for _ in range(30):
-        action: int =  random_player.get_action(
-            payoff_matrix = payoff_matrix_three_three,
-            **empty_params
-        )
-        assert action in [0,1,2]
+    for payoff_matrix in common_two_by_two_games:
+        for _ in range(30):
+            action: int = random_player.get_action(
+                payoff_matrix = payoff_matrix,
+                **empty_params
+            )
+            assert action in [0,1]

@@ -1,61 +1,33 @@
 import pytest
+from enum import Enum
 
-@pytest.fixture(scope="function")
-def payoff_matrix_one_one():
-    return (((1,2),),)
+class Action(Enum):
+    COOPERATE = 0
+    DEFECT = 1
 
-@pytest.fixture(scope="function")
-def payoff_matrix_one_two():
-    return (((1,2), (2,1)),)
+#_______________________________
 
-@pytest.fixture(scope="function")
-def payoff_matrix_two_one():
+        # PAYOFF MATRICES
+
+#_______________________________
+
+
+@pytest.fixture(scope="session")
+def arbitrary_payoff_matrices():
     return (
-        ((1,2),),
-        ((2,3),)
+        (((1,2),),),
+        (((1,2), (2,1)),),
+        (((1,2),),((2,3),)),
+        (((1,2), (2,1)),((2,3), (3,4))),
+        (((1,2), (2,1)),((2,3), (3,4)),((2,3), (3,4))),
+        (((1,2), (2,1), (5,6)),((2,3), (3,4), (7,3)),((2,3), (3,4), (8,2)))
     )
 
-@pytest.fixture(scope="function")
-def payoff_matrix_two_two():
+@pytest.fixture(scope="session")
+def common_two_by_two_games():
     return (
-        ((1,2), (2,1)),
-        ((2,3), (3,4))
-    )
-
-@pytest.fixture(scope="function")
-def payoff_matrix_three_two():
-    return (
-        ((1,2), (2,1)),
-        ((2,3), (3,4)),
-        ((2,3), (3,4))
-    )
-
-@pytest.fixture(scope="function")
-def payoff_matrix_three_three():
-    return (
-        ((1,2), (2,1), (5,6)),
-        ((2,3), (3,4), (7,3)),
-        ((2,3), (3,4), (8,2))
-    )
-
-@pytest.fixture(scope="function")
-def payoff_prisioners_dilemma():
-    return (
-        ((3,3), (0,5)),
-        ((5,0), (1,1))
-    )
-
-@pytest.fixture(scope="function")
-def payoff_stag_hunt():
-    return (
-        ((5,5), (0,3)),
-        ((3,0), (3,3))
-    )
-
-@pytest.fixture(scope="function")
-def payoff_hawk_dove():
-    return (
-        ((3,3), (1,5)),
-        ((5,1), (0,0))
+        (((3,3), (0,5)),((5,0), (1,1))), # prisoner's dilemma
+        (((5,5), (0,3)),((3,0), (3,3))), # stag hunt
+        (((3,3), (1,5)),((5,1), (0,0)))  # hawk dove
     )
 
