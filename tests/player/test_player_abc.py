@@ -1,5 +1,5 @@
 import pytest
-from src.player.player import Player, PayoffMatrixType, MatchHistoryType
+from src.player.player import Player, PayoffMatrix, MatchHistory
 
 from typing import Tuple, Dict, Union, Optional
 
@@ -17,9 +17,9 @@ class EmptyClass (Player):
     def get_action(
         self, 
         game_type: str, 
-        payoff_matrix: PayoffMatrixType,
+        payoff_matrix: PayoffMatrix,
         adversary_id: str,
-        match_history: Optional[MatchHistoryType],
+        match_history: Optional[MatchHistory],
         row_or_col: str
     ) -> int:
                         
