@@ -30,11 +30,11 @@ def test_always_zero_one_one(
     always_zero: AlwaysActionZero
 ) -> None:
 
-    for _ in range(30):
-        assert 0 == always_zero.get_action(
-            payoff_matrix = payoff_matrix_one_one,
-            **empty_params
-        )
+    
+    assert 0 == always_zero.get_action(
+        payoff_matrix = payoff_matrix_one_one,
+        **empty_params
+    )
 
 
 def test_always_zero_one_two(
@@ -43,11 +43,11 @@ def test_always_zero_one_two(
     always_zero: AlwaysActionZero
 ) -> None:
 
-    for _ in range(30):
-        assert 0 == always_zero.get_action(
-            payoff_matrix = payoff_matrix_one_two,
-            **empty_params
-        )
+    
+    assert 0 == always_zero.get_action(
+        payoff_matrix = payoff_matrix_one_two,
+        **empty_params
+    )
 
 
 def test_always_zero_two_one(
@@ -56,11 +56,11 @@ def test_always_zero_two_one(
     always_zero: AlwaysActionZero
 ) -> None:
 
-    for _ in range(30):
-        assert 0 == always_zero.get_action(
-            payoff_matrix = payoff_matrix_two_one,
-            **empty_params
-        )
+    
+    assert 0 == always_zero.get_action(
+        payoff_matrix = payoff_matrix_two_one,
+        **empty_params
+    )
 
 
 def test_always_zero_two_two(
@@ -69,11 +69,11 @@ def test_always_zero_two_two(
     always_zero: AlwaysActionZero
 ) -> None:
 
-    for _ in range(30):
-        assert 0 == always_zero.get_action(
-            payoff_matrix = payoff_matrix_two_two,
-            **empty_params
-        )
+    
+    assert 0 == always_zero.get_action(
+        payoff_matrix = payoff_matrix_two_two,
+        **empty_params
+    )
 
 def test_always_zero_three_two(
     payoff_matrix_three_two: PayoffMatrix, 
@@ -81,11 +81,11 @@ def test_always_zero_three_two(
     always_zero: AlwaysActionZero
 ) -> None:
 
-    for _ in range(30):
-        assert 0 == always_zero.get_action(
-            payoff_matrix = payoff_matrix_three_two,
-            **empty_params
-        )
+    
+    assert 0 == always_zero.get_action(
+        payoff_matrix = payoff_matrix_three_two,
+        **empty_params
+    )   
 
 def test_always_zero_three_three(
     payoff_matrix_three_three: PayoffMatrix, 
@@ -93,8 +93,8 @@ def test_always_zero_three_three(
     always_zero: AlwaysActionZero
 ) -> None:
 
-    for _ in range(30):
-        assert 0 == always_zero.get_action(
-            payoff_matrix = payoff_matrix_three_three,
-            **empty_params
-        )
+    
+    assert 0 == always_zero.get_action(
+        payoff_matrix = payoff_matrix_three_three,
+        **empty_params
+    )
