@@ -23,7 +23,7 @@ class EmptyClass (Player):
         row_or_col: str
     ) -> int:
                         
-        return ""
+        return None
 
 
 @pytest.fixture(scope="function")
@@ -32,24 +32,21 @@ def empty_class() -> EmptyClass:
 
 
 @pytest.fixture(scope="function")
-def empty_get_action_params() -> Dict[str, PlayerFuncParam]:
+def empty_params() -> Dict[str, PlayerFuncParam]:
     return {
         "game_type": "",
         "adversary_id": "",
-        "payoff_matrix": dict(),
+        "payoff_matrix": tuple(),
         "match_history": None,
         "row_or_col": ""
     }
 
 
-class TestEmpty:
-
-    def test_all_is_empty(
-        self, 
-        empty_class: EmptyClass, 
-        empty_get_action_params: Dict[str, PlayerFuncParam]
-    ):
-        
-        assert empty_class.name == ""
-        assert empty_class.match_history == dict()
-        assert empty_class.get_action(**empty_get_action_params) == ""
+def test_all_is_empty(
+    empty_class: EmptyClass, 
+    empty_params: Dict[str, PlayerFuncParam]
+):
+    
+    assert empty_class.name == ""
+    assert empty_class.match_history == dict()
+    assert empty_class.get_action(**empty_params) is None
