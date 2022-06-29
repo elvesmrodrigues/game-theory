@@ -2,8 +2,8 @@ import pytest
 from enum import Enum
 
 class Action(Enum):
-    COOPERATE = 0
-    DEFECT = 1
+    COOPERATE: int = 0
+    DEFECT: int = 1
 
 #_______________________________
 
@@ -31,3 +31,40 @@ def common_two_by_two_games():
         (((3,3), (1,5)),((5,1), (0,0)))  # hawk dove
     )
 
+#_______________________________
+
+        # MATCH HISTORY
+
+#_______________________________
+
+@pytest.fixture(scope="function")
+def empty_match_history():
+    return None
+
+@pytest.fixture(scope="function")
+def cooperate_last_match():
+    return [
+        {"all": [(Action.COOPERATE.value, None)]},
+        {"all": [(None, None), (None, None), (Action.COOPERATE.value, None)]}
+    ]
+
+@pytest.fixture(scope="function")
+def adv_cooperate_last_match():
+    return [
+        {"all": [(None, Action.COOPERATE.value)]},
+        {"all": [(None, None), (None, None), (None, Action.COOPERATE.value)]}
+    ]
+
+@pytest.fixture(scope="function")
+def defect_last_match():
+    return [
+        {"all": [(Action.DEFECT.value, None)]},
+        {"all": [(None, None), (None, None), (Action.DEFECT.value, None)]}
+    ]
+
+@pytest.fixture(scope="function")
+def adv_defect_last_match():
+    return [
+        {"all": [(None, Action.DEFECT.value)]},
+        {"all": [(None, None), (None, None), (None, Action.DEFECT.value)]}
+    ]
