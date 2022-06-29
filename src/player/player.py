@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 
 from typing import Dict, List, Optional, Tuple, Union
 
-
-PayoffMatrixType = Dict[str, Dict[str, Union[float, int]]]
+Number = Union[int, float]
+PayoffMatrix = Tuple[Tuple[Tuple[Number, ...], ...], ...]
 MatchHistoryKey = Tuple[int, str]
-MatchHistoryType = List[Tuple[int, int]]
+MatchHistory = Dict[str, List[Tuple[int, int]]]
 
 
 class Player(ABC):
@@ -27,9 +27,9 @@ class Player(ABC):
     def get_action(
         self, 
         game_type: str, 
-        payoff_matrix: PayoffMatrixType,
+        payoff_matrix: PayoffMatrix,
         adversary_id: str,
-        match_history: Optional[MatchHistoryType],
+        match_history: Optional[MatchHistory],
         row_or_col: str
     ) -> int:
         ...
@@ -44,7 +44,7 @@ class Player(ABC):
                 Type of the game. 
                 (Possible types yet to be defined.)
 
-            payoff_matrix: tuple[tuple[tuple[number, number]]]
+            payoff_matrix: tuple[tuple[tuple[number, ...], ...], ...]
 
                 Matrix with both your and your adversary's payoff.
 
@@ -156,7 +156,7 @@ class Player(ABC):
         self, 
         game_id: int, 
         adversary_id: str
-    ) -> Optional[MatchHistoryType]:
+    ) -> Optional[MatchHistory]:
 
         """
         It returns match_history dictionary at desired position.
@@ -164,7 +164,7 @@ class Player(ABC):
         You should not use or change this function.
         """
 
-        key = self.__create_key( game_id, adversary_id)
+        key = self.__create_key(game_id, adversary_id)
 
         return self.match_history.get(key, None)
 
