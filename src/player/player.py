@@ -49,7 +49,7 @@ class Player(ABC):
 
                     Consider, for example, the payoff_matrix below:
 
-                                        Col
+                                       Col
                                     0      1                    
                                 ( 
                         Row  0    ((1,2), (3,4)),
@@ -62,7 +62,7 @@ class Player(ABC):
                     If, on the other hand, you were the col player 
                     you would receive:
 
-                                        Row
+                                      Row
                                     0      1                    
                                 ( 
                         Col  0    ((2,1), (6,5)),
