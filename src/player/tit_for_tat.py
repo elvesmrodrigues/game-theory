@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Optional
+from typing_extensions import Literal
 from src.player.player import Player, MatchHistory, PayoffMatrix
 
 
@@ -22,7 +23,7 @@ class TitForTat(Player):
         payoff_matrix: PayoffMatrix,
         adversary_id: str,
         match_history: Optional[MatchHistory],
-        row_or_col: str
+        row_or_col: Literal['row', 'col']
     ) -> int:
 
         if match_history is None:

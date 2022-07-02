@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from typing import Dict, List, Optional, Tuple, Union
+from typing_extensions import Literal
 
 Number = Union[int, float]
 PayoffMatrix = Tuple[Tuple[Tuple[Number, ...], ...], ...]
@@ -30,7 +31,7 @@ class Player(ABC):
         payoff_matrix: PayoffMatrix,
         adversary_id: str,
         match_history: Optional[MatchHistory],
-        row_or_col: str
+        row_or_col: Literal['row', 'col']
     ) -> int:
         ...
         """
@@ -121,7 +122,7 @@ class Player(ABC):
                     The information about whether you are the row or col player
                     will be provided (see row_or_col parameter).
 
-            rol_or_col: str
+            rol_or_col: Literal
 
                 "rol" if you are the row player and "col" otherwise.
                 
