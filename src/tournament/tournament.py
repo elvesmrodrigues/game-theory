@@ -1,9 +1,12 @@
+from cmath import pi
 import logging
-import json
+from math import gamma
+import uuid
 
 from typing import Dict, Union, List, Tuple 
 from typing_extensions import Literal
 from random import randint
+import pandas as pd 
 
 from src.player.player import Player
 from src.game.game import Game 
@@ -16,12 +19,15 @@ MatchHistory = Dict[str, List[Tuple[int, int]]]
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s')
 
-class Tournament:
-    def __init__(self, players: List[Player]) -> None:
-        self.players: List[players] = players
-        self.scores: Dict[int, Dict[int, List[Number]]] = dict()
 
-        self.__log_file = open('tournament.log', 'w')
+# TODO: Ao invés dos logs serem salvos em json, salvá-los em CSV. Para importar mais fácil para planilha
+class Tournament:
+    def __init__(self, players: List[Player], games: List[Game]) -> None:
+        self.id: str = str(uuid.uuid4())
+
+        self.players: List[players] = players
+        self.games: List[Game] = games
+        self.scores: Dict[int, Dict[int, List[Number]]] = dict()
 
     def __create_matchings(self) -> List[Tuple[Player, Player]]:
         '''    
@@ -129,46 +135,47 @@ class Tournament:
 
         return action
 
-    def show_final_scores(self, csv_filename: str = None):
+    def save_result(self, output_file: str = None):
         '''
         Method responsible for presenting the players' performance. If the csv_filename parameter is 
         given a valid string (other than None), saves the results in a csv named csv_filename.
         
         --------------------------
         Parameters:
-            csv_filename: str
+            output_file: str
 
-                Name of the csv to be generated with the match results.
+                Name of the file to be generated with the match results.
         
         --------------------------
         Return:
 
             None.
         '''
+        if output_file is None:
+            output_file = f'tournament.xlsx'
 
-        #TODO: Specify final output format and implement it here.
+        data = list()
 
-        results: List[Tuple[str, Number, float]] = list()
         for player in self.scores:
             for game in self.scores[player]:
                 total_score = sum(self.scores[player][game])
-                mean_score = total_score / len(self.scores[player][game]) 
-           
-                results.append((player, total_score, mean_score))
+                num_plays = len(self.scores[player][game])
+                mean_score = round(total_score / num_plays, 2)
+                
+                data.append((player, game, total_score, mean_score, num_plays))
+
+        df = pd.DataFrame(data, columns=['Player', 'Game', 'Total payoff', 'Mean payoff', 'No. of plays']) 
+
+        with pd.ExcelWriter(output_file) as writer:
+            for game in self.games:
+                df_aux = df.loc[df['Game'] == game.type]
+
+                df_aux = df_aux.drop('Game', axis=1)
+                df_aux.sort_values(by='Mean payoff', ascending=False, inplace=True)
+
+                df_aux.to_excel(writer, sheet_name=game.type, index=False)
         
-        results.sort(key = lambda item: item[2], reverse=True)
-
-        print(' ' * 40 + 'FINAL SCORE\n')
-        print(f'Player                                 Total score         Mean score\n')
-        for r in results:
-            print(f'{r[0]:40} {r[1]:5}               {r[2]}')
-
-        print('')
-
-        if csv_filename:
-            pass 
-
-    def round_robin(self, games: List[Game], num_tournaments: int = 1):
+    def round_robin(self, num_tournaments: int = 1):
         '''
 
         This method runs k double round-robin tournaments between players in each game in the list `games`.
@@ -189,11 +196,11 @@ class Tournament:
             None.
         
         '''
-        
+
         matchings = self.__create_matchings()
 
-        for game in games:
-            for tournament in range(num_tournaments):
+        for game in self.games:
+            for _ in range(num_tournaments):
                 for player_row, player_col in matchings:
                     player_row_action = self.__get_player_action_safely(game.type, 
                                                                         player_row, 
@@ -226,28 +233,17 @@ class Tournament:
                     payoff_player_row = game.payoff_row[player_row_action][player_col_action][0]
                     payoff_player_col = game.payoff_col[player_col_action][player_row_action][0]
 
-                    self.__update_player_score(game.id, player_row, payoff_player_row)
-                    self.__update_player_score(game.id, player_col, payoff_player_col)
+                    self.__update_player_score(game.type, player_row, payoff_player_row)
+                    self.__update_player_score(game.type, player_col, payoff_player_col)
 
-                    log_data = {
-                        'game_id': game.id,
-                        'tournament': tournament,
-                        'row_player': player_row.name,
-                        'col_player': player_col.name,
-                        'action_row_player': player_row_action,
-                        'action_col_player': player_col_action,
-                        'payoff_row_player': payoff_player_row,
-                        'payoff_col_player': player_col_action
-                    }
-
-                    self.__log_file.write(json.dumps(log_data) + '\n')
 
 if __name__ == '__main__':
     players = create_player_class_instance_entire_folder()
     game = GameFactoryFromJson("src/game/game_test_sym.json").create_game() 
-    games = [game]
+    game2 = GameFactoryFromJson("src/game/game_test_asym.json").create_game() 
+    games = [game, game2]
 
-    tournament = Tournament(players)
-    tournament.round_robin(games, 100)
+    tournament = Tournament(players, games)
+    tournament.round_robin()
 
-    tournament.show_final_scores()
+    tournament.save_result()
