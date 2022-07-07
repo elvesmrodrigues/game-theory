@@ -1,17 +1,16 @@
-from cmath import pi
 import logging
-from math import gamma
 import uuid
-
-from typing import Dict, Union, List, Tuple 
-from typing_extensions import Literal
 from random import randint
-import pandas as pd 
+from typing import Dict, List, Tuple, Union
 
+import pandas as pd
+from func_timeout import func_timeout
+from func_timeout.exceptions import FunctionTimedOut
+from src.game.game import Game, GameFactoryFromJson
+from src.player.dynamic_imports import \
+    create_player_class_instance_entire_folder
 from src.player.player import Player
-from src.game.game import Game 
-from src.game.game import GameFactoryFromJson
-from src.player.dynamic_imports import create_player_class_instance_entire_folder
+from typing_extensions import Literal
 
 Number = Union[int, float]
 PayoffMatrix = Tuple[Tuple[Tuple[Number, ...], ...], ...]
@@ -22,12 +21,15 @@ logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s')
 
 # TODO: Ao invés dos logs serem salvos em json, salvá-los em CSV. Para importar mais fácil para planilha
 class Tournament:
-    def __init__(self, players: List[Player], games: List[Game]) -> None:
+    def __init__(self, players: List[Player], games: List[Game], action_timeout: float = 1.0) -> None:
         self.id: str = str(uuid.uuid4())
 
         self.players: List[players] = players
         self.games: List[Game] = games
+        self.action_timeout: float = action_timeout
+
         self.scores: Dict[int, Dict[int, List[Number]]] = dict()
+        self.logs: Dict[int, Dict[int, List[Number]]] = dict()
 
     def __create_matchings(self) -> List[Tuple[Player, Player]]:
         '''    
@@ -127,11 +129,19 @@ class Tournament:
 
         action = None
         try:
-            action = player.get_action(game_type, payoff_matrix, adversary_id, match_history, row_or_col)
+            args = (game_type, payoff_matrix, adversary_id, match_history, row_or_col)
+            action = func_timeout(timeout=self.action_timeout, func=player.get_action, args=args)
+        except FunctionTimedOut:
+            action = randint(0, len(payoff_matrix)-1) 
+
+            logging.error(f'The action to be played by {player.name} was not returned in' \
+                            f' {self.action_timeout} seconds and was terminated. The random' \
+                            f' action {action} was taken.')
 
         except Exception as e:
             action = randint(0, len(payoff_matrix)-1) 
-            logging.exception(f'The action of player {player.name} generated the following exception and the random action {action} was taken:')
+            logging.error(f'The action of player {player.name} generated the following exception' \ 
+                            f'and the random action {action} was taken: {e}')
 
         return action
 
@@ -174,7 +184,7 @@ class Tournament:
                 df_aux.sort_values(by='Mean payoff', ascending=False, inplace=True)
 
                 df_aux.to_excel(writer, sheet_name=game.type, index=False)
-        
+
     def round_robin(self, num_tournaments: int = 1):
         '''
 
@@ -200,7 +210,7 @@ class Tournament:
         matchings = self.__create_matchings()
 
         for game in self.games:
-            for _ in range(num_tournaments):
+            for tournament in range(num_tournaments):
                 for player_row, player_col in matchings:
                     player_row_action = self.__get_player_action_safely(game.type, 
                                                                         player_row, 
