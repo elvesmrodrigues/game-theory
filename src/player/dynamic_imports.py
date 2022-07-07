@@ -33,7 +33,7 @@ def _get_player_class_name(path_to_file: Path) -> str:
             if regex_match is not None:
                 return regex_match.group("class_name")
 
-        raise NameError("No class has been found.")
+        raise NameError(f"No class has been found in {path_to_file}.")
 
 
 def import_class_from_from_file(
