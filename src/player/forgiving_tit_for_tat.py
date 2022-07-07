@@ -26,10 +26,12 @@ class ForgivingTitForTat(Player):
         row_or_col: Literal['row', 'col']
     ) -> int:
 
-        if match_history is None:
+        desired_col: str = row_or_col
+
+        if match_history is None or match_history[desired_col] == []:
             return Action.COOPERATE.value
         
-        previous_action, adversary_previous_action = match_history[row_or_col][-1]
+        previous_action, adversary_previous_action = match_history[desired_col][-1]
 
         # go back to cooperating if defected
         defected = (previous_action == Action.DEFECT.value)

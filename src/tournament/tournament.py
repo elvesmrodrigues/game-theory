@@ -140,8 +140,8 @@ class Tournament:
 
         except Exception as e:
             action = randint(0, len(payoff_matrix)-1) 
-            logging.error(f'The action of player {player.name} generated the following exception' \ 
-                            f'and the random action {action} was taken: {e}')
+            logging.error(f'The action of player {player.name} generated the following exception' + \
+                          f'and the random action {action} was taken: {e}')
 
         return action
 
