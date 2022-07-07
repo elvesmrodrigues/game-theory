@@ -1,5 +1,6 @@
 attrs==21.4.0
 et-xmlfile==1.1.0
+func-timeout==4.3.5
 importlib-metadata==4.12.0
 iniconfig==1.1.1
 numpy==1.21.6
