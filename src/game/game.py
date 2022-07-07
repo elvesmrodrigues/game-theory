@@ -23,6 +23,7 @@ class Game:
     symmetric: bool
     payoff_row: PayoffMatrix
     payoff_col: PayoffMatrix
+    payoff_matrix: JsonPayoffMatrix
 
 
 def nested_list_to_nested_tuple(lists: List) -> Tuple:
@@ -135,7 +136,8 @@ class GameFactoryFromJson:
             type = self.json_dict["type"],
             symmetric = (payoff_row == payoff_col),
             payoff_row = payoff_row,
-            payoff_col = payoff_col
+            payoff_col = payoff_col,
+            payoff_matrix = self.json_dict["payoff_matrix"]
         )
    
 

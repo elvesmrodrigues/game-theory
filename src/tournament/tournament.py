@@ -1,4 +1,6 @@
+import json
 import logging
+import os
 import uuid
 from random import randint
 from typing import Dict, List, Tuple, Union
@@ -10,7 +12,7 @@ from src.game.game import Game, GameFactoryFromJson
 from src.player.dynamic_imports import \
     create_player_class_instance_entire_folder
 from src.player.player import Player
-from typing_extensions import Literal
+from typing_extensions import Literal, TypedDict
 
 Number = Union[int, float]
 PayoffMatrix = Tuple[Tuple[Tuple[Number, ...], ...], ...]
@@ -18,10 +20,30 @@ MatchHistory = Dict[str, List[Tuple[int, int]]]
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s')
 
+Number = Union[float, int]
+PayoffMatrix = List[List[List[Number]]]
+
+class PlayLog(TypedDict):
+    tournament: int 
+    player_row: str 
+    player_col: str 
+    player_row_action: int 
+    player_col_action: int 
+    player_row_payoff: Number
+    player_col_payoff: Number 
+
+class MatchLog(TypedDict):
+    game_id: str 
+    game_type: str 
+    payoff_matrix: PayoffMatrix
+    players: List[Player]
+    tournament_type: str 
+    num_tournaments: int
+    plays: List[PlayLog]
 
 # TODO: Ao invés dos logs serem salvos em json, salvá-los em CSV. Para importar mais fácil para planilha
 class Tournament:
-    def __init__(self, players: List[Player], games: List[Game], action_timeout: float = 1.0) -> None:
+    def __init__(self, players: List[Player], games: List[Game], action_timeout: float = 1.0, log_path: str = 'logs/') -> None:
         self.id: str = str(uuid.uuid4())
 
         self.players: List[players] = players
@@ -29,8 +51,52 @@ class Tournament:
         self.action_timeout: float = action_timeout
 
         self.scores: Dict[int, Dict[int, List[Number]]] = dict()
-        self.logs: Dict[int, Dict[int, List[Number]]] = dict()
+    
+        self.match_logs: Dict[str, MatchLog] = dict()
+        self.log_path: str = log_path if log_path[-1] == '/' else log_path + '/'
 
+    def __create_match_log(self, game: Game, tournament_type: str, num_tournaments: int, tournament: int, 
+                                player_row: Player, player_col: Player, player_row_action: int, player_col_action: int):
+        
+        if game.id not in self.match_logs:
+            self.match_logs[game.id] = {
+                'game_id': game.id,
+                'game_type': game.type,
+                'payoff_matrix': game.payoff_matrix,
+                'players': [player.name for player in self.players],
+                'tournament_type': tournament_type,
+                'num_tournaments': num_tournaments,
+                'plays': list()
+            }
+        
+        player_row_payoff: Number = game.payoff_row[player_row_action][player_col_action][0]
+        player_col_payoff: Number = game.payoff_col[player_col_action][player_row_action][0]
+        
+        play_log: PlayLog = {
+            'tournament': tournament,
+            'player_row': player_row.name,
+            'player_col': player_col.name,
+            'player_row_action': player_row_action,
+            'player_col_action': player_col_action,
+            'player_row_payoff': player_row_payoff,
+            'player_col_payoff': player_col_payoff
+        }
+
+        self.match_logs[game.id]['plays'].append(play_log)
+
+    def save_match_logs(self):
+        if not os.path.exists(self.log_path):
+            os.makedirs(self.log_path)
+
+        for match_log in self.match_logs.values():
+            game_id = match_log['game_id']
+            game_type = match_log['game_type']
+
+            filename = f'{self.log_path}{game_type}_{game_id}.json'
+
+            with open(filename, 'w') as f:
+                f.write(json.dumps(match_log, indent=4))
+        
     def __create_matchings(self) -> List[Tuple[Player, Player]]:
         '''    
         This method creates round matching between all players.
@@ -131,6 +197,7 @@ class Tournament:
         try:
             args = (game_type, payoff_matrix, adversary_id, match_history, row_or_col)
             action = func_timeout(timeout=self.action_timeout, func=player.get_action, args=args)
+
         except FunctionTimedOut:
             action = randint(0, len(payoff_matrix)-1) 
 
@@ -207,10 +274,11 @@ class Tournament:
         
         '''
 
+        tournament_type = 'round-robin'
         matchings = self.__create_matchings()
 
         for game in self.games:
-            for tournament in range(num_tournaments):
+            for tournament in range(1, num_tournaments + 1):
                 for player_row, player_col in matchings:
                     player_row_action = self.__get_player_action_safely(game.type, 
                                                                         player_row, 
@@ -240,12 +308,14 @@ class Tournament:
                                                     player_col_action, 
                                                     player_row_action)
 
-                    payoff_player_row = game.payoff_row[player_row_action][player_col_action][0]
-                    payoff_player_col = game.payoff_col[player_col_action][player_row_action][0]
+                    player_row_payoff = game.payoff_row[player_row_action][player_col_action][0]
+                    player_col_payoff = game.payoff_col[player_col_action][player_row_action][0]
 
-                    self.__update_player_score(game.type, player_row, payoff_player_row)
-                    self.__update_player_score(game.type, player_col, payoff_player_col)
+                    self.__update_player_score(game.type, player_row, player_row_payoff)
+                    self.__update_player_score(game.type, player_col, player_col_payoff)
 
+                    self.__create_match_log(game, tournament_type, num_tournaments, tournament, player_row, 
+                                            player_col, player_row_action, player_col_action)
 
 if __name__ == '__main__':
     players = create_player_class_instance_entire_folder()
@@ -254,6 +324,8 @@ if __name__ == '__main__':
     games = [game, game2]
 
     tournament = Tournament(players, games)
-    tournament.round_robin()
+    tournament.round_robin(8)
 
-    tournament.save_result()
+    # tournament.save_result()
+
+    tournament.save_match_logs()
