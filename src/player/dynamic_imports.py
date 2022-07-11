@@ -10,9 +10,6 @@ from types import ModuleType
 from .player import Player
 
 
-PATH_PLAYERS = Path("src/player/")
-
-
 def _get_player_class_name(path_to_file: Path) -> str:
 
     """

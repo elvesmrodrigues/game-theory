@@ -2,14 +2,16 @@ import json
 import logging
 import os
 import uuid
+from pathlib import Path
 import copy
+import argparse
 from random import randint, shuffle
 from typing import Dict, List, Tuple, Union
 
 import pandas as pd
 from func_timeout import func_timeout
 from func_timeout.exceptions import FunctionTimedOut
-from src.game.game import Game, GameFactoryFromJson
+from src.game.game import Game, create_game_class_instance_entire_folder
 from src.player.dynamic_imports import \
     create_player_class_instance_entire_folder
 from src.player.player import Player
@@ -104,7 +106,7 @@ class Tournament:
             game_id = match_log['game_id']
             game_type = match_log['game_type']
 
-            filename = f'{self.log_path}{game_type}_{game_id}.json'
+            filename = f'{self.log_path}{game_type}_{game_id}_{self.id}.json'
 
             with open(filename, 'w') as f:
                 f.write(json.dumps(match_log, indent=4))
@@ -274,7 +276,10 @@ class Tournament:
             None.
         '''
         if output_file is None:
-            output_file = f'tournament.xlsx'
+            if not os.path.exists('out/'):
+                os.makedirs('out/')
+
+            output_file = f'out/tournament_{self.id}.xlsx'
 
         data = list()
 
@@ -319,7 +324,7 @@ class Tournament:
         
         '''
 
-        tournament_type = 'round-robin'
+        tournament_type = f'round-robin [{matching_strategy}]'
         matchings = self.__create_complete_matchings() if matching_strategy == 'complete' else self.__create_random_matchings()
 
         for game in self.games:
@@ -363,24 +368,70 @@ class Tournament:
                                             player_col, player_row_action, player_col_action)
 
 if __name__ == '__main__':
-    players = create_player_class_instance_entire_folder()
+    arg_parser = argparse.ArgumentParser(description='List the content of a folder')
     
-    game = GameFactoryFromJson("src/game/game_test_sym.json").create_game() 
-    game2 = GameFactoryFromJson("src/game/game_test_asym.json").create_game() 
-    
-    games = [game, game2]
+    arg_parser.add_argument('-pf',
+                            '--player_folder',
+                            default='src/player/',
+                            help='Folder where the players\' strategies are implemented.')
+
+    arg_parser.add_argument('-gf',
+                            '--game_folder',
+                            default='games/',
+                            help='Folder where the games\' json is.')
+
+    arg_parser.add_argument('-rp',
+                            '--robot_player',
+                            default='Always action zero',
+                            help='Robot player name.')
+
+    arg_parser.add_argument('-nt',
+                        '--num_tournaments',
+                        type=int,
+                        default=1,
+                        help='Number of tournaments..')
+
+    arg_parser.add_argument('-ms',
+                    '--matching_strategy',
+                    default='complete',
+                    choices=['complete', 'random'],
+                    help='Matching strategy.')
+
+    arg_parser.add_argument('-o',
+                    '--output',
+                    help='Name of the XLS file to save the match results.')
+
+    arg_parser.add_argument('-lp',
+                    '--log_path',
+                    default='logs',
+                    help='Folder where the logs of the matches will be recorded.')
+
+    args = arg_parser.parse_args()
+
+    player_folder = Path(args.player_folder) 
+    game_folder = args.game_folder
+
+    robot_player_name = args.robot_player
+
+    num_tournaments = args.num_tournaments
+    matching_strategy = args.matching_strategy
+
+    output_file = args.output
+    log_path = args.log_path
+
+    players = create_player_class_instance_entire_folder(player_folder)
+    games = create_game_class_instance_entire_folder(game_folder)
 
     player = list(filter(lambda player: player.name == 'Always action zero', players))[0]
-    
     robot_player = copy.deepcopy(player)
     robot_player.robot = True
 
     robot_player_name =  f'[ROBOT] {player.name}'
     robot_player.name = robot_player_name
 
-    tournament = Tournament(players, games, robot_player)
-    tournament.round_robin('random', 8)
+    tournament = Tournament(players, games, robot_player, log_path=log_path)
 
-    tournament.save_result()
+    tournament.round_robin(matching_strategy, num_tournaments)
 
+    tournament.save_result(output_file)
     tournament.save_match_logs()

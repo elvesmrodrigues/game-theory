@@ -11,7 +11,6 @@ class Action(Enum):
 
 class TitForTat(Player):
 
-
     def __init__(self) -> None:
         super().__init__()
 

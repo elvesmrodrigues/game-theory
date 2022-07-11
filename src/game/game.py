@@ -1,6 +1,7 @@
 import json
 
 from pathlib import Path
+from glob import glob
 from dataclasses import dataclass
 
 from typing import List, Tuple, Union
@@ -139,12 +140,8 @@ class GameFactoryFromJson:
             payoff_col = payoff_col,
             payoff_matrix = self.json_dict["payoff_matrix"]
         )
-   
 
-if __name__ == '__main__':
-
-    game = GameFactoryFromJson("src/game/game_test_asym.json").create_game() 
-    print(game)
-
-    game = GameFactoryFromJson("src/game/game_test_sym.json").create_game() 
-    print(game)
+def create_game_class_instance_entire_folder(path: str) -> List[Game]:
+    path = path if path[-1] == '/' else path + '/'
+    json_filepaths = glob(path + '*.json')
+    return [GameFactoryFromJson(json_filepath).create_game() for json_filepath in json_filepaths]
