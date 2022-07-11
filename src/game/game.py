@@ -4,13 +4,17 @@ from pathlib import Path
 from glob import glob
 from dataclasses import dataclass
 
-from typing import List, Tuple, Union
-
+from typing import Dict, List, Tuple, Union, Any
+from typing_extensions import TypedDict
 
 Number = Union[float, int]
 JsonPayoffMatrix = List[List[List[Number]]]
 PayoffMatrix = Tuple[Tuple[Tuple[Number, ...], ...], ...]
 
+class GameDict(TypedDict):
+    id: int 
+    type: str 
+    payoff_matrix: PayoffMatrix
 
 @dataclass(frozen=True)
 class Game:
@@ -51,17 +55,6 @@ def transpose_list_of_lists(lists: List) -> List:
 
 
 class GameFactoryFromJson:
-
-    def __init__(self, json_filepath: Path) -> None:
-
-        """
-        Given a filepath to a .json file, it constructs a Game.
-        """
-
-        with open(json_filepath, "r") as file:
-            self.json_dict = json.load(file)
-
-
     def __invert_row_col_payoffs_order(self, transposed_row: JsonPayoffMatrix) -> None:
         
         """
@@ -89,7 +82,7 @@ class GameFactoryFromJson:
                 payoffs.reverse()
 
 
-    def _convert_payoff_row_to_col(self) -> PayoffMatrix:
+    def _convert_payoff_row_to_col(self, game_dict: Dict[Any, Any]) -> PayoffMatrix:
 
         """
         Given a payoff matrix, it constructs and returns a payoff 
@@ -113,35 +106,45 @@ class GameFactoryFromJson:
                         )
         """
 
-        transposed_row: JsonPayoffMatrix = transpose_list_of_lists(self.json_dict["payoff_matrix"])
+        transposed_row: JsonPayoffMatrix = transpose_list_of_lists(game_dict["payoff_matrix"])
 
         self.__invert_row_col_payoffs_order(transposed_row)
 
         return nested_list_to_nested_tuple(transposed_row)
 
 
-    def create_game(self):
+    def create_game(self, game_dict: GameDict):
         
         """
         It creates the game from data inside .json file.
         """
 
         payoff_row: PayoffMatrix = nested_list_to_nested_tuple(
-            self.json_dict["payoff_matrix"]
+            game_dict["payoff_matrix"]
         )
 
-        payoff_col: PayoffMatrix = self._convert_payoff_row_to_col()
+        payoff_col: PayoffMatrix = self._convert_payoff_row_to_col(game_dict)
 
         return Game(
-            id = self.json_dict["id"],
-            type = self.json_dict["type"],
+            id = game_dict["id"],
+            type = game_dict["type"],
             symmetric = (payoff_row == payoff_col),
             payoff_row = payoff_row,
             payoff_col = payoff_col,
-            payoff_matrix = self.json_dict["payoff_matrix"]
+            payoff_matrix = game_dict["payoff_matrix"]
         )
 
 def create_game_class_instance_entire_folder(path: str) -> List[Game]:
     path = path if path[-1] == '/' else path + '/'
     json_filepaths = glob(path + '*.json')
-    return [GameFactoryFromJson(json_filepath).create_game() for json_filepath in json_filepaths]
+
+    game_factory_from_json: GameFactoryFromJson = GameFactoryFromJson()
+
+    games: List[Game] = []
+    for json_filepath in json_filepaths:
+        with open(json_filepath, "r") as file:
+            json_dict = json.load(file)
+            game = game_factory_from_json.create_game(json_dict)
+            games.append(game)
+        
+    return games
