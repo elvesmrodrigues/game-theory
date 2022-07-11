@@ -111,7 +111,7 @@ class Tournament:
             with open(filename, 'w') as f:
                 f.write(json.dumps(match_log, indent=4))
         
-    def __create_complete_matchings(self) -> List[Tuple[Player, Player]]:
+    def create_complete_matchings(self) -> List[Tuple[Player, Player]]:
         '''    
         This method creates round matching between all players.
 
@@ -134,7 +134,7 @@ class Tournament:
 
         return matching
     
-    def __create_random_matchings(self) -> List[Tuple[Player, Player]]:
+    def create_random_matchings(self) -> List[Tuple[Player, Player]]:
         '''
         This method creates round matching between the players randomly.
 
@@ -325,7 +325,7 @@ class Tournament:
         '''
 
         tournament_type = f'round-robin [{matching_strategy}]'
-        matchings = self.__create_complete_matchings() if matching_strategy == 'complete' else self.__create_random_matchings()
+        matchings = self.create_complete_matchings() if matching_strategy == 'complete' else self.create_random_matchings()
 
         for game in self.games:
             for tournament in range(1, num_tournaments + 1):
@@ -361,8 +361,8 @@ class Tournament:
                     player_row_payoff = game.payoff_row[player_row_action][player_col_action][0]
                     player_col_payoff = game.payoff_col[player_col_action][player_row_action][0]
 
-                    self.__update_player_score(game.type, player_row, player_row_payoff)
-                    self.__update_player_score(game.type, player_col, player_col_payoff)
+                    self.__update_player_score(game.id, player_row, player_row_payoff)
+                    self.__update_player_score(game.id, player_col, player_col_payoff)
 
                     self.__create_match_log(game, tournament_type, num_tournaments, tournament, player_row, 
                                             player_col, player_row_action, player_col_action)
