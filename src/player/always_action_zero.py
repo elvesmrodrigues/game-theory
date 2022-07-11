@@ -6,8 +6,9 @@ class AlwaysActionZero(Player):
 
 
     def __init__(self) -> None:
+        super().__init__()
+
         self.name = "Always action zero"
-        self.match_history = dict()
 
     def get_action(
         self, 

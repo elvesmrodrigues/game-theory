@@ -13,9 +13,9 @@ class GrimTrigger(Player):
 
 
     def __init__(self) -> None:
-        self.name = "Grim Trigger"
-        self.match_history = dict()
+        super().__init__()
 
+        self.name = "Grim Trigger"
 
     def get_action(
         self, 

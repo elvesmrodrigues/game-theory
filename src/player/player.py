@@ -22,8 +22,10 @@ class Player(ABC):
         ''' 
         self.name = "Insert your implementation's name here"
         self.match_history = dict()
-    
 
+        # Do not change this value
+        self.robot = False 
+    
     @abstractmethod
     def get_action(
         self, 

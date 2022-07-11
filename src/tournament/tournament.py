@@ -2,7 +2,8 @@ import json
 import logging
 import os
 import uuid
-from random import randint
+import copy
+from random import randint, shuffle
 from typing import Dict, List, Tuple, Union
 
 import pandas as pd
@@ -43,10 +44,19 @@ class MatchLog(TypedDict):
 
 # TODO: Ao invés dos logs serem salvos em json, salvá-los em CSV. Para importar mais fácil para planilha
 class Tournament:
-    def __init__(self, players: List[Player], games: List[Game], action_timeout: float = 1.0, log_path: str = 'logs/') -> None:
+    def __init__(self, players: List[Player], 
+                    games: List[Game], 
+                    robot_player: Player,
+                    action_timeout: float = 1.0, 
+                    log_path: str = 'logs/') -> None:
+
         self.id: str = str(uuid.uuid4())
 
         self.players: List[players] = players
+
+        # used to create random matchings in each turn. If the number of players is odd, add the robot player 
+        self.extended_players: List[players] = players + [robot_player] if len(players) % 2 else players.copy() 
+
         self.games: List[Game] = games
         self.action_timeout: float = action_timeout
 
@@ -54,6 +64,7 @@ class Tournament:
     
         self.match_logs: Dict[str, MatchLog] = dict()
         self.log_path: str = log_path if log_path[-1] == '/' else log_path + '/'
+
 
     def __create_match_log(self, game: Game, tournament_type: str, num_tournaments: int, tournament: int, 
                                 player_row: Player, player_col: Player, player_row_action: int, player_col_action: int):
@@ -72,6 +83,7 @@ class Tournament:
         player_row_payoff: Number = game.payoff_row[player_row_action][player_col_action][0]
         player_col_payoff: Number = game.payoff_col[player_col_action][player_row_action][0]
         
+
         play_log: PlayLog = {
             'tournament': tournament,
             'player_row': player_row.name,
@@ -97,10 +109,12 @@ class Tournament:
             with open(filename, 'w') as f:
                 f.write(json.dumps(match_log, indent=4))
         
-    def __create_matchings(self) -> List[Tuple[Player, Player]]:
+    def __create_complete_matchings(self) -> List[Tuple[Player, Player]]:
         '''    
         This method creates round matching between all players.
 
+        If the method receives players A, B and C, it creates matchings 
+        [(A, B), (A, C), (B, A), (B, C), (C, A) and (C, B)].  
 
         --------------------------
         Return:
@@ -115,6 +129,33 @@ class Tournament:
                 if player_row.name == player_col.name:
                     continue
                 matching.append((player_row, player_col))
+
+        return matching
+    
+    def __create_random_matchings(self) -> List[Tuple[Player, Player]]:
+        '''
+        This method creates round matching between the players randomly.
+
+        If the number of players is odd, a robot player will be inserted into the match, 
+        and then random matches will be created between them in each round.
+
+        If the method receives A, B, C, it can create in round 1 the matchings 
+        [(A,B), (B,C), (C, Robot)] and in another round create the matchings [(Robot, A), (C, A), (A,B)]. 
+
+        --------------------------
+        Return:
+
+            Returns the round matching between all players.
+        '''
+        
+        shuffle(self.extended_players)
+
+        matching: List[Tuple[Player, Player]] = list()
+
+        for i in range(len(self.extended_players) - 1):
+            player_row = self.extended_players[i]
+            player_col = self.extended_players[i + 1]
+            matching.append((player_row, player_col))
 
         return matching
 
@@ -143,6 +184,10 @@ class Tournament:
             None.
 
         '''
+
+        # Robot payoffs are not considered
+        if player.robot:
+            return
 
         if player.name not in self.scores:
             self.scores[player.name] = dict()
@@ -252,7 +297,7 @@ class Tournament:
 
                 df_aux.to_excel(writer, sheet_name=game.type, index=False)
 
-    def round_robin(self, num_tournaments: int = 1):
+    def round_robin(self, matching_strategy: Literal['complete', 'random'], num_tournaments: int = 1):
         '''
 
         This method runs k double round-robin tournaments between players in each game in the list `games`.
@@ -275,7 +320,7 @@ class Tournament:
         '''
 
         tournament_type = 'round-robin'
-        matchings = self.__create_matchings()
+        matchings = self.__create_complete_matchings() if matching_strategy == 'complete' else self.__create_random_matchings()
 
         for game in self.games:
             for tournament in range(1, num_tournaments + 1):
@@ -319,13 +364,23 @@ class Tournament:
 
 if __name__ == '__main__':
     players = create_player_class_instance_entire_folder()
+    
     game = GameFactoryFromJson("src/game/game_test_sym.json").create_game() 
     game2 = GameFactoryFromJson("src/game/game_test_asym.json").create_game() 
+    
     games = [game, game2]
 
-    tournament = Tournament(players, games)
-    tournament.round_robin(8)
+    player = list(filter(lambda player: player.name == 'Always action zero', players))[0]
+    
+    robot_player = copy.deepcopy(player)
+    robot_player.robot = True
 
-    # tournament.save_result()
+    robot_player_name =  f'[ROBOT] {player.name}'
+    robot_player.name = robot_player_name
+
+    tournament = Tournament(players, games, robot_player)
+    tournament.round_robin('random', 8)
+
+    tournament.save_result()
 
     tournament.save_match_logs()

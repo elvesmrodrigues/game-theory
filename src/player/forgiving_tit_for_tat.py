@@ -13,10 +13,10 @@ class ForgivingTitForTat(Player):
 
 
     def __init__(self) -> None:
+        super().__init__()
+
         self.name = "Forgiving Tit for Tat"
-        self.match_history = dict()
-
-
+        
     def get_action(
         self, 
         game_type: str, 

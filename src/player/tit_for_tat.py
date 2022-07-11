@@ -13,9 +13,9 @@ class TitForTat(Player):
 
 
     def __init__(self) -> None:
-        self.name = "Tit for Tat"
-        self.match_history = dict()
+        super().__init__()
 
+        self.name = "Tit for Tat"
 
     def get_action(
         self, 

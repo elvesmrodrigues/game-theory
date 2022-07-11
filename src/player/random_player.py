@@ -9,9 +9,9 @@ class RandomPlayer(Player):
 
 
     def __init__(self) -> None:
-        self.name = "Random Player"
-        self.match_history = dict()
+        super().__init__()
 
+        self.name = "Random Player"
 
     def get_action(self,
         game_type: str, 

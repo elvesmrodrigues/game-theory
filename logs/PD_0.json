@@ -1,0 +1,397 @@
+{
+    "game_id": 0,
+    "game_type": "PD",
+    "payoff_matrix": [
+        [
+            [
+                4,
+                4
+            ],
+            [
+                5,
+                0
+            ]
+        ],
+        [
+            [
+                0,
+                5
+            ],
+            [
+                1,
+                1
+            ]
+        ]
+    ],
+    "players": [
+        "Always action zero",
+        "Forgiving Tit for Tat",
+        "Grim Trigger",
+        "Random Player",
+        "Tit for Tat"
+    ],
+    "tournament_type": "round-robin",
+    "num_tournaments": 8,
+    "plays": [
+        {
+            "tournament": 1,
+            "player_row": "Random Player",
+            "player_col": "Always action zero",
+            "player_row_action": 1,
+            "player_col_action": 0,
+            "player_row_payoff": 5,
+            "player_col_payoff": 0
+        },
+        {
+            "tournament": 1,
+            "player_row": "Always action zero",
+            "player_col": "Forgiving Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 1,
+            "player_row": "Forgiving Tit for Tat",
+            "player_col": "[ROBOT] Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 1,
+            "player_row": "[ROBOT] Always action zero",
+            "player_col": "Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 1,
+            "player_row": "Tit for Tat",
+            "player_col": "Grim Trigger",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 2,
+            "player_row": "Random Player",
+            "player_col": "Always action zero",
+            "player_row_action": 1,
+            "player_col_action": 0,
+            "player_row_payoff": 5,
+            "player_col_payoff": 0
+        },
+        {
+            "tournament": 2,
+            "player_row": "Always action zero",
+            "player_col": "Forgiving Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 2,
+            "player_row": "Forgiving Tit for Tat",
+            "player_col": "[ROBOT] Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 2,
+            "player_row": "[ROBOT] Always action zero",
+            "player_col": "Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 2,
+            "player_row": "Tit for Tat",
+            "player_col": "Grim Trigger",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 3,
+            "player_row": "Random Player",
+            "player_col": "Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 3,
+            "player_row": "Always action zero",
+            "player_col": "Forgiving Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 3,
+            "player_row": "Forgiving Tit for Tat",
+            "player_col": "[ROBOT] Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 3,
+            "player_row": "[ROBOT] Always action zero",
+            "player_col": "Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 3,
+            "player_row": "Tit for Tat",
+            "player_col": "Grim Trigger",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 4,
+            "player_row": "Random Player",
+            "player_col": "Always action zero",
+            "player_row_action": 1,
+            "player_col_action": 0,
+            "player_row_payoff": 5,
+            "player_col_payoff": 0
+        },
+        {
+            "tournament": 4,
+            "player_row": "Always action zero",
+            "player_col": "Forgiving Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 4,
+            "player_row": "Forgiving Tit for Tat",
+            "player_col": "[ROBOT] Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 4,
+            "player_row": "[ROBOT] Always action zero",
+            "player_col": "Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 4,
+            "player_row": "Tit for Tat",
+            "player_col": "Grim Trigger",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 5,
+            "player_row": "Random Player",
+            "player_col": "Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 5,
+            "player_row": "Always action zero",
+            "player_col": "Forgiving Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 5,
+            "player_row": "Forgiving Tit for Tat",
+            "player_col": "[ROBOT] Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 5,
+            "player_row": "[ROBOT] Always action zero",
+            "player_col": "Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 5,
+            "player_row": "Tit for Tat",
+            "player_col": "Grim Trigger",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 6,
+            "player_row": "Random Player",
+            "player_col": "Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 6,
+            "player_row": "Always action zero",
+            "player_col": "Forgiving Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 6,
+            "player_row": "Forgiving Tit for Tat",
+            "player_col": "[ROBOT] Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 6,
+            "player_row": "[ROBOT] Always action zero",
+            "player_col": "Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 6,
+            "player_row": "Tit for Tat",
+            "player_col": "Grim Trigger",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 7,
+            "player_row": "Random Player",
+            "player_col": "Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 7,
+            "player_row": "Always action zero",
+            "player_col": "Forgiving Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 7,
+            "player_row": "Forgiving Tit for Tat",
+            "player_col": "[ROBOT] Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 7,
+            "player_row": "[ROBOT] Always action zero",
+            "player_col": "Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 7,
+            "player_row": "Tit for Tat",
+            "player_col": "Grim Trigger",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 8,
+            "player_row": "Random Player",
+            "player_col": "Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 8,
+            "player_row": "Always action zero",
+            "player_col": "Forgiving Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 8,
+            "player_row": "Forgiving Tit for Tat",
+            "player_col": "[ROBOT] Always action zero",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 8,
+            "player_row": "[ROBOT] Always action zero",
+            "player_col": "Tit for Tat",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        },
+        {
+            "tournament": 8,
+            "player_row": "Tit for Tat",
+            "player_col": "Grim Trigger",
+            "player_row_action": 0,
+            "player_col_action": 0,
+            "player_row_payoff": 4,
+            "player_col_payoff": 4
+        }
+    ]
+}
