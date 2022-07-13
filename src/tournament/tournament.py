@@ -3,9 +3,9 @@ import logging
 import os
 import uuid
 from pathlib import Path
-import copy
+from copy import deepcopy
 import argparse
-from random import randint, shuffle
+from random import randint, shuffle, choice
 from typing import Dict, List, Tuple, Union
 
 import pandas as pd
@@ -47,8 +47,7 @@ class MatchLog(TypedDict):
 # TODO: Ao invés dos logs serem salvos em json, salvá-los em CSV. Para importar mais fácil para planilha
 class Tournament:
     def __init__(self, players: List[Player], 
-                    games: List[Game], 
-                    robot_player: Player,
+                    games: List[Game],
                     action_timeout: float = 1.0, 
                     log_path: str = 'logs/') -> None:
 
@@ -57,7 +56,7 @@ class Tournament:
         self.players: List[players] = players
 
         # used to create random matchings in each turn. If the number of players is odd, add the robot player 
-        self.extended_players: List[players] = players + [robot_player] if len(players) % 2 else players.copy() 
+        self.robot_players: List[players] = self.__create_robot_players(players)
 
         self.games: List[Game] = games
         self.action_timeout: float = action_timeout
@@ -66,6 +65,17 @@ class Tournament:
     
         self.match_logs: Dict[str, MatchLog] = dict()
         self.log_path: str = log_path if log_path[-1] == '/' else log_path + '/'
+
+
+    def __create_robot_players(self, players: List[Player]) -> List[Player]:
+
+        players_copies = deepcopy(players)
+
+        for player in players_copies:
+            player.name = f"[ROBOT] {player.name}"
+            player.robot = True
+
+        return players_copies
 
 
     def __create_match_log(self, game: Game, tournament_type: str, num_tournaments: int, tournament: int, 
@@ -124,15 +134,12 @@ class Tournament:
             Returns the round matching between all players.
         '''
 
-        matching: List[Tuple[Player, Player]] = list()
-
-        for player_row in self.players:
-            for player_col in self.players:
-                if player_row.name == player_col.name:
-                    continue
-                matching.append((player_row, player_col))
-
-        return matching
+        return [
+            (player_row, player_col)
+            for player_row in self.players
+            for player_col in self.players
+            if player_row.name != player_col.name
+        ]
     
     def create_random_matchings(self) -> List[Tuple[Player, Player]]:
         '''
@@ -150,14 +157,23 @@ class Tournament:
             Returns the round matching between all players.
         '''
         
-        shuffle(self.extended_players)
+        shuffle(self.players)
 
-        matching: List[Tuple[Player, Player]] = list()
+        matching: List[Tuple[Player, Player]] = [
+            (player_row, player_col) 
+            for player_row, player_col in zip(self.players[::2], self.players[1::2])
+        ]
 
-        for i in range(len(self.extended_players) - 1):
-            player_row = self.extended_players[i]
-            player_col = self.extended_players[i + 1]
-            matching.append((player_row, player_col))
+        if len(self.players)%2 == 1:
+            last_player = self.players[-1]
+            robot = choice(self.robot_players)
+
+            while robot.name == f"[ROBOT] {last_player.name}":
+                robot = choice(self.robot_players)
+
+            matching.append(
+                tuple(shuffle([last_player,robot]))
+            )
 
         return matching
 
@@ -380,11 +396,6 @@ if __name__ == '__main__':
                             default='games/',
                             help='Folder where the games\' json is.')
 
-    arg_parser.add_argument('-rp',
-                            '--robot_player',
-                            default='Always action zero',
-                            help='Robot player name.')
-
     arg_parser.add_argument('-nt',
                         '--num_tournaments',
                         type=int,
@@ -411,8 +422,6 @@ if __name__ == '__main__':
     player_folder = Path(args.player_folder) 
     game_folder = args.game_folder
 
-    robot_player_name = args.robot_player
-
     num_tournaments = args.num_tournaments
     matching_strategy = args.matching_strategy
 
@@ -422,14 +431,7 @@ if __name__ == '__main__':
     players = create_player_class_instance_entire_folder(player_folder)
     games = create_game_class_instance_entire_folder(game_folder)
 
-    player = list(filter(lambda player: player.name == 'Always action zero', players))[0]
-    robot_player = copy.deepcopy(player)
-    robot_player.robot = True
-
-    robot_player_name =  f'[ROBOT] {player.name}'
-    robot_player.name = robot_player_name
-
-    tournament = Tournament(players, games, robot_player, log_path=log_path)
+    tournament = Tournament(players, games, log_path=log_path)
 
     tournament.round_robin(matching_strategy, num_tournaments)
 

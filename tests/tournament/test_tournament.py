@@ -14,9 +14,15 @@ class TestTournament(unittest.TestCase):
     def setUp(self) -> None:
         self.games: List[Game] = [get_mock_game()]
         self.players: List[Player] = [PlayerMock(0), PlayerMock(1)]
-        self.robot_player: Player = PlayerMock(0, '[ROBOT]')
+        #self.robot_player: Player = PlayerMock(0, '[ROBOT]')
 
-        self.tournament = Tournament(self.players, self.games, self.robot_player)
+        self.tournament = Tournament(self.players, self.games)#, self.robot_player)
+
+
+    def test_robots_different_from_players(self):
+        for player, copy in zip(self.tournament.players, self.tournament.robot_players):
+            self.assertNotEqual(id(player), id(copy))
+            self.assertEqual(f"[ROBOT] {player.name}", copy.name)
 
     def test_create_complete_matching(self):
         expected_matching: List[Tuple[Player, Player]] = [
