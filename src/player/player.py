@@ -45,7 +45,8 @@ class Player(ABC):
             game_type: str
 
                 Type of the game. 
-                (Possible types yet to be defined.)
+                For example "PD" (prisoner's dilemma), "HD" (hawk-dove) 
+                or "SH" (stag-hunt).
 
             payoff_matrix: tuple[tuple[tuple[number, ...], ...], ...]
 
@@ -74,9 +75,10 @@ class Player(ABC):
                                 )
 
                     Simply put, you can implement the function as though
-                    you were always the row player. Your actions will
-                    always be the the "row", your adversary's will always
-                    be the "col", and you payoff will always be the first one.
+                    you always are the row player. Your actions will
+                    always be the "row" index, your adversary's will always
+                    be the "col" index, and you payoff will always be the 
+                    first one.
 
                         Your payoff:
                             payoff_matrix[action][adversary_action][0]
@@ -91,7 +93,8 @@ class Player(ABC):
             match_history: Optional[dict[str, list[tuple[int, int]]]]
 
                 Dictionary of lists containing the match history between you and 
-                your adversary. If there are no matches, its value will be None.
+                your adversary. If there are no matches, its value will be None
+                or an empty list.
 
                 The possible keys for the dict are: ["all", "row", "col"].
 
@@ -99,34 +102,34 @@ class Player(ABC):
                 (your_action, your_adversary_action).
 
                     If, for example, you want to get the action your adversary
-                    played last match, you would just do "match_history[0][1]".
+                    played last match, you would just do "match_history[-1][1]".
 
                 Symmetric game:
                     There is no distinction between being the row or 
                     col player, so all keys take you to the same match history.
 
                 Asymmetric game:
-                    In this case you might want act differently if you are
-                    the row or col player. 
+                    In this case you might want to act differently if you are
+                    playing as row or as col. 
                     
                     For instance, if you are the row player, the last time
-                    you played you adversary is somewhat ambiguous. It 
-                    might refer to the literally last time you played him/her
+                    you played against you adversary is somewhat ambiguous. It 
+                    might refer to literally last time you played him/her
                     or it might refer to the last time you played against
                     him/her while you were the row player.
 
-                    You can distinguish between these two cases with the keys.
-                        "all": will get the entire match_history regardless of 
+                    You can distinguish between these two cases using dict keys.
+                        "all": it will get the entire match_history regardless of 
                                 who was the row player and who was the col player. 
-                        "row": will only get the matches you were the row player.
-                        "col": will only get the matches you were the col player.
+                        "row": it will only get the matches you were the row player.
+                        "col": it will only get the matches you were the col player.
 
-                    The information about whether you are the row or col player
+                    Information about whether you are row or col
                     will be provided (see row_or_col parameter).
 
-            rol_or_col: Literal
+            row_or_col: Literal
 
-                "rol" if you are the row player and "col" otherwise.
+                "row" if you are the row and "col" otherwise.
                 
                 Only really useful for asymmetric games (see match_history
                 parameter).
@@ -148,7 +151,7 @@ class Player(ABC):
     ) -> MatchHistoryKey:
 
         """
-        It creates the key to the dictionary.
+        Creates the key to the dictionary.
         You should not use or change this function.
         """
 
@@ -162,8 +165,8 @@ class Player(ABC):
     ) -> Optional[MatchHistory]:
 
         """
-        It returns match_history dictionary at desired position.
-        If dictionary said position does not exist, it returns None.
+        Returns match_history dictionary at desired index.
+        If dictionary position does not exist, it returns None.
         You should not use or change this function.
         """
 
@@ -179,7 +182,7 @@ class Player(ABC):
     ) -> None:
         
         """
-        It creates match_history dictionary.
+        Creates match_history dictionary.
         You should not use or change this function.
         """
 
@@ -204,7 +207,7 @@ class Player(ABC):
     ) -> None:
 
         """
-        It updates match_history dictionary.
+        Updates match_history dictionary.
         You should not use or change this function.
         """
         actions: Tuple[int, int] = (action, adversary_action)
@@ -226,7 +229,7 @@ class Player(ABC):
     ) -> None:
 
         """
-        It creates (if necessary) and updates match_history dictionary.
+        Creates (if necessary) and updates match_history dictionary.
         You should not use or change this function.
         """
 
