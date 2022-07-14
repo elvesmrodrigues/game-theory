@@ -19,7 +19,7 @@
 
     "Tournament": {
 
-        "number_of_rounds": 1,
+        "number_of_rounds": 1000,
 
         "matching_strategy": "complete",
 

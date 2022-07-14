@@ -369,6 +369,8 @@ class Tournament:
         matchings = self.create_complete_matchings() if matching_strategy == 'complete' else self.create_random_matchings()
 
         rounds_count = 0
+        current = time.time()
+
         num_rounds = len(self.games) * num_tournaments
 
         for game in self.games:
@@ -412,10 +414,17 @@ class Tournament:
                                             player_col, player_row_action, player_col_action)
 
                 rounds_count += 1
+                time_elapsed = time.time() - current
 
-                if time_between_ranking_shows > 0:
-                    self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows)
-                
+                if num_tournaments < 100:
+                    self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows)   
+                elif time_elapsed > time_between_ranking_shows:
+                    self.show_ranking(rounds_count, num_rounds, 0)
+                    current = time.time()
+
+        self.show_ranking(rounds_count, num_rounds, 0)
+
+
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='List the content of a folder')
     
