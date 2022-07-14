@@ -13,7 +13,7 @@ class ComplexExampleIf(Player):
 
     """
         An example a little more complicated than the rest, utilizing 
-        different strategies though the use of if statements.
+        different strategies through the use of if statements.
     """
 
     def __init__(self) -> None:
