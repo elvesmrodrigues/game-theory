@@ -3,6 +3,7 @@ import re
 from os import walk
 from pathlib import Path
 from importlib import import_module
+from collections import Counter
 
 from typing import List, Optional, Set, Type
 from types import ModuleType
@@ -82,6 +83,18 @@ def _get_filenames(path_to_folder: Path) -> List[str]:
     return filenames
 
 
+def are_strings_unique(list_strings: List[str]) -> bool:
+    return len(list_strings) == len(set(list_strings))
+
+
+def return_duplicate_strings(list_string: List[str]) -> List[str]:
+    return [
+        string 
+        for string, count in Counter(list_string).items() 
+        if count > 1
+    ]
+
+
 def create_player_class_instance_entire_folder(
     path_to_folder: Path = Path("players/"), 
     filenames_to_exclude: Set[str] = set(),
@@ -104,10 +117,19 @@ def create_player_class_instance_entire_folder(
         filenames = _get_filenames(path_to_folder)
 
     if filenames is not None:
-        return [
+
+        instances: List[Player] = [
             create_player_class_instance_from_file(path_to_folder / file, package) 
             for file in filenames
             if file not in filenames_to_exclude
         ]
+
+        classes_names: List[str] = [class_.name for class_ in instances]
+
+        if not are_strings_unique(classes_names):
+            duplicates = return_duplicate_strings(classes_names)
+            raise ValueError(f"Classes names are not unique. {duplicates} showed more than one.")
         
+        return instances
+
     return []
