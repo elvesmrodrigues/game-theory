@@ -86,6 +86,7 @@ If you want to change some parameters, like the type of tournament or remove som
         - besides playing the same number of games per round, there is no restriction, i.e. teams can face each other many times in a row
         - if there are an odd number of players, a copy of another randomly selected player will be chosen to complete the round (this copy does not show up in the final ranking)
 3. **time_to_take_action** -> maximum time your `get_action` implementation can take to make a choice. If time is exceeded, a random action shall be chosen.
-4. **time_between_ranking_shows** -> time to refresh the real-time ranking in the terminal
-5. **match_logs_dir** -> directory in which all matches' results will be saved
-6. **ranking_filename** -> filename of the final ranking for a tournament
+4. **time_between_ranking_shows** -> time to sleep after refreshing the real-time ranking in the terminal 
+5. **print_ranking_after_n_rounds** -> change if you want to print the ranking after every n rounds rather than after every round. 
+6. **match_logs_dir** -> directory in which all matches' results will be saved
+7. **ranking_filename** -> filename of the final ranking for a tournament

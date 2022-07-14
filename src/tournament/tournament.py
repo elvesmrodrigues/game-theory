@@ -339,7 +339,8 @@ class Tournament:
 
     def round_robin(self, matching_strategy: Literal['complete', 'random'], 
                         num_tournaments: int = 1, 
-                        time_between_ranking_shows: float = .5):
+                        time_between_ranking_shows: float = .5,
+                        print_after: int = 100):
         '''
 
         This method runs k double round-robin tournaments between players in each game in the list `games`.
@@ -370,8 +371,7 @@ class Tournament:
         matchings = self.create_complete_matchings()   
 
         rounds_count = 0
-        current = time.time()
-
+        print_after = abs(int(print_after))
         num_rounds = len(self.games) * num_tournaments
 
         for game in self.games:
@@ -418,14 +418,10 @@ class Tournament:
                     self.__create_match_log(game, tournament_type, num_tournaments, tournament, player_row, 
                                             player_col, player_row_action, player_col_action)
 
-                rounds_count += 1
-                time_elapsed = time.time() - current
+                if rounds_count%print_after == 0:
+                    self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows)
 
-                if num_tournaments < 100:
-                    self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows)   
-                elif time_elapsed > time_between_ranking_shows:
-                    self.show_ranking(rounds_count, num_rounds, 0)
-                    current = time.time()
+                rounds_count += 1
 
         self.show_ranking(rounds_count, num_rounds, 0)
 
