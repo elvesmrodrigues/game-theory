@@ -366,7 +366,7 @@ class Tournament:
         '''
 
         tournament_type = f'round-robin [{matching_strategy}]'
-        matchings = self.create_complete_matchings() if matching_strategy == 'complete' else self.create_random_matchings()
+        matchings = self.create_complete_matchings()   
 
         rounds_count = 0
         current = time.time()
@@ -375,6 +375,10 @@ class Tournament:
 
         for game in self.games:
             for tournament in range(1, num_tournaments + 1):
+
+                if matching_strategy == 'complete':
+                    matchings = self.create_random_matchings()
+
                 for player_row, player_col in matchings:
                     player_row_action = self.__get_player_action_safely(game.type, 
                                                                         player_row, 
