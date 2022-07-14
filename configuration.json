@@ -21,7 +21,7 @@
 
     "Tournament": {
 
-        "number_of_rounds": 1,
+        "number_of_rounds": 100,
 
         "matching_strategy": "complete",
 
@@ -31,6 +31,8 @@
         },
 
         "time_to_take_action": 0.01,
+        
+        "time_between_ranking_shows": 0.5,
 
         "match_logs_dir": "logs/",
 
