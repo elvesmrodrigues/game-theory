@@ -47,11 +47,13 @@ def main():
         return
 
     players = create_player_class_instance_entire_folder(
-        path_to_folder = Path(config["Player"]["dir"])
+        path_to_folder = Path(config["Player"]["dir"]),
+        filenames_to_exclude = set(config["Player"]["files_to_ignore"])
     )
 
     games = create_game_class_instance_entire_folder(
-        path = config["Games"]["dir"]
+        path_to_folder = Path(config["Games"]["dir"]),
+        filenames_to_exclude = set(config["Games"]["files_to_ignore"])
     )
 
     run_tournament(players, games, config)

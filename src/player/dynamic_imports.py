@@ -70,24 +70,24 @@ def _are_filenames_unique(filenames: List[str]):
     return len(filenames) == len(set(filenames))
 
 
-def _get_filenames(path_to_folder: Path) -> List[Path]:
+def _get_filenames(path_to_folder: Path) -> List[str]:
 
     (_, _, filenames) = next(walk(path_to_folder))
 
     if not _are_filenames_unique(filenames):
         raise RuntimeError("Some of the provided files have the same name.")
 
-    filenames = [Path(file) for file in sorted(filenames)]
+    filenames = [file for file in sorted(filenames)]
 
     return filenames
 
 
 def create_player_class_instance_entire_folder(
     path_to_folder: Path = Path("src/player/"), 
-    filenames_to_exclude: Set[Path] = {
-        Path("__init__.py"),
-        Path("player.py"),
-        Path("dynamic_imports.py")
+    filenames_to_exclude: Set[str] = {
+        "__init__.py",
+        "player.py",
+        "dynamic_imports.py"
     },
     package: str = "src.player"
 ) -> List[Player]:
@@ -102,7 +102,7 @@ def create_player_class_instance_entire_folder(
         "class <CLASS_NAME><some_spaces_maybe>(Player)<rest>".
     """
 
-    filenames: Optional[List[Path]] = None
+    filenames: Optional[List[str]] = None
 
     if path_to_folder.is_dir():
         filenames = _get_filenames(path_to_folder)
