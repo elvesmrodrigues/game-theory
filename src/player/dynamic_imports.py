@@ -67,22 +67,6 @@ def create_player_class_instance_from_file(
     return class_()
 
 
-def _are_filenames_unique(filenames: List[str]):
-    return len(filenames) == len(set(filenames))
-
-
-def _get_filenames(path_to_folder: Path) -> List[str]:
-
-    (_, _, filenames) = next(walk(path_to_folder))
-
-    if not _are_filenames_unique(filenames):
-        raise RuntimeError("Some of the provided files have the same name.")
-
-    filenames = [file for file in sorted(filenames)]
-
-    return filenames
-
-
 def are_strings_unique(list_strings: List[str]) -> bool:
     return len(list_strings) == len(set(list_strings))
 
@@ -93,6 +77,19 @@ def return_duplicate_strings(list_string: List[str]) -> List[str]:
         for string, count in Counter(list_string).items() 
         if count > 1
     ]
+
+
+def _get_filenames(path_to_folder: Path) -> List[str]:
+
+    (_, _, filenames) = next(walk(path_to_folder))
+
+    if not are_strings_unique(filenames):
+        duplicates = return_duplicate_strings(filenames)
+        raise ValueError(f"Filenames are not unique. {duplicates} showed more than one.")
+
+    filenames = [file for file in sorted(filenames)]
+
+    return filenames
 
 
 def create_player_class_instance_entire_folder(
