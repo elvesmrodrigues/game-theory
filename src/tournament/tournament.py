@@ -1,14 +1,17 @@
 import json
 import logging
 import os
+from unicodedata import name
 import uuid
+import time
 from pathlib import Path
-import copy
+from copy import deepcopy
 import argparse
-from random import randint, shuffle
+from random import randint, shuffle, choice
 from typing import Dict, List, Tuple, Union
 
 import pandas as pd
+from pandas import DataFrame
 from func_timeout import func_timeout
 from func_timeout.exceptions import FunctionTimedOut
 from src.game.game import Game, create_game_class_instance_entire_folder
@@ -44,11 +47,9 @@ class MatchLog(TypedDict):
     num_tournaments: int
     plays: List[PlayLog]
 
-# TODO: Ao invés dos logs serem salvos em json, salvá-los em CSV. Para importar mais fácil para planilha
 class Tournament:
     def __init__(self, players: List[Player], 
-                    games: List[Game], 
-                    robot_player: Player,
+                    games: List[Game],
                     action_timeout: float = 1.0, 
                     log_path: str = 'logs/') -> None:
 
@@ -57,7 +58,7 @@ class Tournament:
         self.players: List[players] = players
 
         # used to create random matchings in each turn. If the number of players is odd, add the robot player 
-        self.extended_players: List[players] = players + [robot_player] if len(players) % 2 else players.copy() 
+        self.robot_players: List[players] = self.__create_robot_players(players)
 
         self.games: List[Game] = games
         self.action_timeout: float = action_timeout
@@ -66,6 +67,17 @@ class Tournament:
     
         self.match_logs: Dict[str, MatchLog] = dict()
         self.log_path: str = log_path if log_path[-1] == '/' else log_path + '/'
+
+
+    def __create_robot_players(self, players: List[Player]) -> List[Player]:
+
+        players_copies = deepcopy(players)
+
+        for player in players_copies:
+            player.name = f"[ROBOT] {player.name}"
+            player.robot = True
+
+        return players_copies
 
 
     def __create_match_log(self, game: Game, tournament_type: str, num_tournaments: int, tournament: int, 
@@ -124,15 +136,12 @@ class Tournament:
             Returns the round matching between all players.
         '''
 
-        matching: List[Tuple[Player, Player]] = list()
-
-        for player_row in self.players:
-            for player_col in self.players:
-                if player_row.name == player_col.name:
-                    continue
-                matching.append((player_row, player_col))
-
-        return matching
+        return [
+            (player_row, player_col)
+            for player_row in self.players
+            for player_col in self.players
+            if player_row.name != player_col.name
+        ]
     
     def create_random_matchings(self) -> List[Tuple[Player, Player]]:
         '''
@@ -150,14 +159,23 @@ class Tournament:
             Returns the round matching between all players.
         '''
         
-        shuffle(self.extended_players)
+        shuffle(self.players)
 
-        matching: List[Tuple[Player, Player]] = list()
+        matching: List[Tuple[Player, Player]] = [
+            (player_row, player_col) 
+            for player_row, player_col in zip(self.players[::2], self.players[1::2])
+        ]
 
-        for i in range(len(self.extended_players) - 1):
-            player_row = self.extended_players[i]
-            player_col = self.extended_players[i + 1]
-            matching.append((player_row, player_col))
+        if len(self.players)%2 == 1:
+            last_player = self.players[-1]
+            robot = choice(self.robot_players)
+
+            while robot.name == f"[ROBOT] {last_player.name}":
+                robot = choice(self.robot_players)
+
+            matching.append(
+                tuple(shuffle([last_player,robot]))
+            )
 
         return matching
 
@@ -279,30 +297,48 @@ class Tournament:
             if not os.path.exists('out/'):
                 os.makedirs('out/')
 
-            output_file = f'out/tournament_{self.id}.xlsx'
-
+            output_file = f'out/tournament_{self.id}.csv'
+            
+        df = self.get_ranking()
+        df['Tournament ID'] = self.id
+        df.to_csv(output_file, index=False)
+        
+    def get_ranking(self) -> DataFrame:
         data = list()
-
         for player in self.scores:
+            total_payoff = 0
+            number_of_plays = 0
             for game in self.scores[player]:
-                total_score = sum(self.scores[player][game])
-                num_plays = len(self.scores[player][game])
-                mean_score = round(total_score / num_plays, 2)
-                
-                data.append((player, game, total_score, mean_score, num_plays))
+                total_payoff += sum(self.scores[player][game])
+                number_of_plays += len(self.scores[player][game])
 
-        df = pd.DataFrame(data, columns=['Player', 'Game', 'Total payoff', 'Mean payoff', 'No. of plays']) 
+            data.append((player, total_payoff, round(total_payoff / number_of_plays, 2) , number_of_plays))
 
-        with pd.ExcelWriter(output_file) as writer:
-            for game in self.games:
-                df_aux = df.loc[df['Game'] == game.type]
+        df = pd.DataFrame(data, columns=['Player', 'Total payoff', 'Mean payoff', 'No. of plays']) 
+        df.sort_values(by='Total payoff', ascending=False, inplace=True)
 
-                df_aux = df_aux.drop('Game', axis=1)
-                df_aux.sort_values(by='Mean payoff', ascending=False, inplace=True)
+        return df 
 
-                df_aux.to_excel(writer, sheet_name=game.type, index=False)
+    def __clean_terminal(self):
+        clean_command: str = 'cls' if os.name == 'nt' else 'clear'
+        os.system(clean_command) 
 
-    def round_robin(self, matching_strategy: Literal['complete', 'random'], num_tournaments: int = 1):
+    def show_ranking(self, num_rounds: int, total_rounds: int, time_between_ranking_shows: float):
+        self.__clean_terminal()
+
+        df: DataFrame = self.get_ranking()
+
+        output: str = df.to_string(index=False)
+        max_columns_chars: int = output.find('\n') + 1
+        
+        print(f'Round {num_rounds} of {total_rounds}\n'.center(max_columns_chars))
+        print(output)
+
+        time.sleep(time_between_ranking_shows)
+
+    def round_robin(self, matching_strategy: Literal['complete', 'random'], 
+                        num_tournaments: int = 1, 
+                        time_between_ranking_shows: float = .5):
         '''
 
         This method runs k double round-robin tournaments between players in each game in the list `games`.
@@ -317,6 +353,11 @@ class Tournament:
 
                 Number of tournaments that the players will play against each other each game.
 
+            time_between_ranking_shows: float
+
+                The ranking of the players will be displayed every time_between_ranking_shows seconds, 
+                if time_between_ranking_shows is different from None.
+
         --------------------------
         Return:
 
@@ -326,6 +367,9 @@ class Tournament:
 
         tournament_type = f'round-robin [{matching_strategy}]'
         matchings = self.create_complete_matchings() if matching_strategy == 'complete' else self.create_random_matchings()
+
+        rounds_count = 0
+        num_rounds = len(self.games) * num_tournaments
 
         for game in self.games:
             for tournament in range(1, num_tournaments + 1):
@@ -367,6 +411,11 @@ class Tournament:
                     self.__create_match_log(game, tournament_type, num_tournaments, tournament, player_row, 
                                             player_col, player_row_action, player_col_action)
 
+                rounds_count += 1
+
+                if time_between_ranking_shows > 0:
+                    self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows)
+                
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='List the content of a folder')
     
@@ -379,11 +428,6 @@ if __name__ == '__main__':
                             '--game_folder',
                             default='games/',
                             help='Folder where the games\' json is.')
-
-    arg_parser.add_argument('-rp',
-                            '--robot_player',
-                            default='Always action zero',
-                            help='Robot player name.')
 
     arg_parser.add_argument('-nt',
                         '--num_tournaments',
@@ -406,32 +450,29 @@ if __name__ == '__main__':
                     default='logs',
                     help='Folder where the logs of the matches will be recorded.')
 
-    args = arg_parser.parse_args()
+    arg_parser.add_argument('-tbrs',
+                    '--time_between_ranking_shows',
+                    default=.5,
+                    help='Folder where the logs of the matches will be recorded.')
 
-    player_folder = Path(args.player_folder) 
-    game_folder = args.game_folder
+    args: argparse.Namespace = arg_parser.parse_args()
 
-    robot_player_name = args.robot_player
+    player_folder: Path = Path(args.player_folder) 
+    game_folder: str = args.game_folder
 
-    num_tournaments = args.num_tournaments
-    matching_strategy = args.matching_strategy
+    num_tournaments: int = args.num_tournaments
+    matching_strategy: str = args.matching_strategy
 
-    output_file = args.output
-    log_path = args.log_path
+    output_file: str = args.output
+    log_path: str = args.log_path
 
-    players = create_player_class_instance_entire_folder(player_folder)
-    games = create_game_class_instance_entire_folder(game_folder)
+    players: List[Player] = create_player_class_instance_entire_folder(player_folder)
+    games: List[Game] = create_game_class_instance_entire_folder(game_folder)
 
-    player = list(filter(lambda player: player.name == 'Always action zero', players))[0]
-    robot_player = copy.deepcopy(player)
-    robot_player.robot = True
+    time_between_ranking_shows: float = args.time_between_ranking_shows
 
-    robot_player_name =  f'[ROBOT] {player.name}'
-    robot_player.name = robot_player_name
-
-    tournament = Tournament(players, games, robot_player, log_path=log_path)
-
-    tournament.round_robin(matching_strategy, num_tournaments)
+    tournament: Tournament = Tournament(players, games, log_path=log_path)
+    tournament.round_robin(matching_strategy, num_tournaments, time_between_ranking_shows)
 
     tournament.save_result(output_file)
     tournament.save_match_logs()

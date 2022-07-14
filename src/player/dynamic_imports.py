@@ -3,6 +3,7 @@ import re
 from os import walk
 from pathlib import Path
 from importlib import import_module
+from collections import Counter
 
 from typing import List, Optional, Set, Type
 from types import ModuleType
@@ -66,30 +67,35 @@ def create_player_class_instance_from_file(
     return class_()
 
 
-def _are_filenames_unique(filenames: List[str]):
-    return len(filenames) == len(set(filenames))
+def are_strings_unique(list_strings: List[str]) -> bool:
+    return len(list_strings) == len(set(list_strings))
 
 
-def _get_filenames(path_to_folder: Path) -> List[Path]:
+def return_duplicate_strings(list_string: List[str]) -> List[str]:
+    return [
+        string 
+        for string, count in Counter(list_string).items() 
+        if count > 1
+    ]
+
+
+def _get_filenames(path_to_folder: Path) -> List[str]:
 
     (_, _, filenames) = next(walk(path_to_folder))
 
-    if not _are_filenames_unique(filenames):
-        raise RuntimeError("Some of the provided files have the same name.")
+    if not are_strings_unique(filenames):
+        duplicates = return_duplicate_strings(filenames)
+        raise ValueError(f"Filenames are not unique. {duplicates} showed more than one.")
 
-    filenames = [Path(file) for file in sorted(filenames)]
+    filenames = [file for file in sorted(filenames)]
 
     return filenames
 
 
 def create_player_class_instance_entire_folder(
-    path_to_folder: Path = Path("src/player/"), 
-    filenames_to_exclude: Set[Path] = {
-        Path("__init__.py"),
-        Path("player.py"),
-        Path("dynamic_imports.py")
-    },
-    package: str = "src.player"
+    path_to_folder: Path = Path("players/"), 
+    filenames_to_exclude: Set[str] = set(),
+    package: str = "players"
 ) -> List[Player]:
 
     """
@@ -102,16 +108,25 @@ def create_player_class_instance_entire_folder(
         "class <CLASS_NAME><some_spaces_maybe>(Player)<rest>".
     """
 
-    filenames: Optional[List[Path]] = None
+    filenames: Optional[List[str]] = None
 
     if path_to_folder.is_dir():
         filenames = _get_filenames(path_to_folder)
 
     if filenames is not None:
-        return [
+
+        instances: List[Player] = [
             create_player_class_instance_from_file(path_to_folder / file, package) 
             for file in filenames
             if file not in filenames_to_exclude
         ]
+
+        classes_names: List[str] = [class_.name for class_ in instances]
+
+        if not are_strings_unique(classes_names):
+            duplicates = return_duplicate_strings(classes_names)
+            raise ValueError(f"Classes' names are not unique. {duplicates} showed more than one.")
         
+        return instances
+
     return []

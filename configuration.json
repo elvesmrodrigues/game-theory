@@ -1,0 +1,39 @@
+{
+    "Player": {
+
+        "dir": "players/",
+
+        "files_to_ignore": [
+            ""
+        ]
+    },
+
+    "Games": {
+
+        "dir": "games/",
+
+        "files_to_ignore": [
+            ""
+        ]
+    },
+
+    "Tournament": {
+
+        "number_of_rounds": 1,
+
+        "matching_strategy": "complete",
+
+        "__matching_strategy_options__": {
+            "complete": "Use this when you want to run a round-robin tournament", 
+            "random": "Use this when you want each round to have matches created randomly. Teams can face each other two rounds in a row."
+        },
+
+        "time_to_take_action": 0.01,
+        
+        "time_between_ranking_shows": 0.5,
+
+        "match_logs_dir": "logs/",
+
+        "ranking_filename": "ranking.csv"
+    }
+}

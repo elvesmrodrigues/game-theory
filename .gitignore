@@ -1,6 +1,12 @@
 # vscode
 *.code-workspace
 
+# data created by program
+*.xlsx
+*.xlsx#
+*.html
+*.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
