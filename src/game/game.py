@@ -4,7 +4,7 @@ from pathlib import Path
 from glob import glob
 from dataclasses import dataclass
 
-from typing import Dict, List, Tuple, Union, Any
+from typing import Dict, List, Set, Tuple, Union, Any
 from typing_extensions import TypedDict
 
 Number = Union[float, int]
@@ -134,9 +134,16 @@ class GameFactoryFromJson:
             payoff_matrix = game_dict["payoff_matrix"]
         )
 
-def create_game_class_instance_entire_folder(path: str) -> List[Game]:
-    path = path if path[-1] == '/' else path + '/'
-    json_filepaths = glob(path + '*.json')
+
+def create_game_class_instance_entire_folder(path_to_folder: Path, filenames_to_exclude: Set[str] = set()) -> List[Game]:
+    
+    json_filepaths = glob(str(path_to_folder / '*.json'))
+
+    json_filepaths = [
+        json_file 
+        for json_file in json_filepaths
+        if Path(json_file).name not in filenames_to_exclude
+    ]
 
     game_factory_from_json: GameFactoryFromJson = GameFactoryFromJson()
 

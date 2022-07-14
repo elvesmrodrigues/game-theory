@@ -1,12 +1,10 @@
 {
     "Player": {
 
-        "dir": "src/player",
+        "dir": "players/",
 
         "files_to_ignore": [
-            "__init__.py", 
-            "player.py", 
-            "dynamic_imports.py"
+            ""
         ]
     },
 
