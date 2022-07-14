@@ -4,6 +4,7 @@
 # data created by program
 *.xlsx
 *.xlsx#
+*.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
