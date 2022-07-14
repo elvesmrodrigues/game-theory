@@ -173,9 +173,10 @@ class Tournament:
             while robot.name == f"[ROBOT] {last_player.name}":
                 robot = choice(self.robot_players)
 
-            matching.append(
-                tuple(shuffle([last_player,robot]))
-            )
+            match_to_append = [last_player,robot]
+            shuffle(match_to_append)
+
+            matching.append(tuple(match_to_append))
 
         return matching
 
