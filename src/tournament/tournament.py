@@ -47,7 +47,6 @@ class MatchLog(TypedDict):
     num_tournaments: int
     plays: List[PlayLog]
 
-# TODO: Ao invés dos logs serem salvos em json, salvá-los em CSV. Para importar mais fácil para planilha
 class Tournament:
     def __init__(self, players: List[Player], 
                     games: List[Game],
@@ -298,29 +297,12 @@ class Tournament:
             if not os.path.exists('out/'):
                 os.makedirs('out/')
 
-            output_file = f'out/tournament_{self.id}.xlsx'
-
-        data = list()
-
-        for player in self.scores:
-            for game in self.scores[player]:
-                total_score = sum(self.scores[player][game])
-                num_plays = len(self.scores[player][game])
-                mean_score = round(total_score / num_plays, 2)
-                
-                data.append((player, game, total_score, mean_score, num_plays))
-
-        df = pd.DataFrame(data, columns=['Player', 'Game', 'Total payoff', 'Mean payoff', 'No. of plays']) 
-
-        with pd.ExcelWriter(output_file) as writer:
-            for game in self.games:
-                df_aux = df.loc[df['Game'] == game.type]
-
-                df_aux = df_aux.drop('Game', axis=1)
-                df_aux.sort_values(by='Mean payoff', ascending=False, inplace=True)
-
-                df_aux.to_excel(writer, sheet_name=game.type, index=False)
-
+            output_file = f'out/tournament_{self.id}.csv'
+            
+        df = self.get_ranking()
+        df['Tournament ID'] = self.id
+        df.to_csv(output_file, index=False)
+        
     def get_ranking(self) -> DataFrame:
         data = list()
         for player in self.scores:
