@@ -128,7 +128,7 @@ def create_player_class_instance_entire_folder(
 
         if not are_strings_unique(classes_names):
             duplicates = return_duplicate_strings(classes_names)
-            raise ValueError(f"Classes names are not unique. {duplicates} showed more than one.")
+            raise ValueError(f"Classes' names are not unique. {duplicates} showed more than one.")
         
         return instances
 
