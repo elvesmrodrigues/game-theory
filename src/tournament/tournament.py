@@ -413,7 +413,7 @@ class Tournament:
 
                 rounds_count += 1
 
-                if time_between_ranking_shows is not None:
+                if time_between_ranking_shows > 0:
                     self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows)
                 
 if __name__ == '__main__':
