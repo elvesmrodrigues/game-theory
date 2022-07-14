@@ -83,13 +83,9 @@ def _get_filenames(path_to_folder: Path) -> List[str]:
 
 
 def create_player_class_instance_entire_folder(
-    path_to_folder: Path = Path("src/player/"), 
-    filenames_to_exclude: Set[str] = {
-        "__init__.py",
-        "player.py",
-        "dynamic_imports.py"
-    },
-    package: str = "src.player"
+    path_to_folder: Path = Path("players/"), 
+    filenames_to_exclude: Set[str] = set(),
+    package: str = "players"
 ) -> List[Player]:
 
     """
