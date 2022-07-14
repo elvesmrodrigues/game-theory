@@ -91,7 +91,7 @@ class ComplexExampleIf(Player):
         strategy_method = self.strategy_mapping.get(game_type, None)
 
         if strategy_method is None:
-            return -1
+            return Action.COOPERATE.value
         
         return strategy_method(
             payoff_matrix, adversary_id, match_history, row_or_col

@@ -74,6 +74,6 @@ class ComplexExampleIf(Player):
                 payoff_matrix, adversary_id, match_history, row_or_col
             )
 
-        return -1
+        return Action.COOPERATE.value
 
         
