@@ -29,7 +29,8 @@ def run_tournament(players, games, config):
 
     tournament.round_robin(
         matching_strategy = config["Tournament"]["matching_strategy"], 
-        num_tournaments = config["Tournament"]["number_of_rounds"],
+        min_num_rounds = config["Tournament"]["min_number_of_rounds"],
+        max_num_rounds = config["Tournament"]["max_number_of_rounds"],
         time_between_ranking_shows=config["Tournament"]["time_between_ranking_shows"],
         print_after = config["Tournament"]["print_ranking_after_n_rounds"]
     )

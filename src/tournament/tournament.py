@@ -44,7 +44,7 @@ class MatchLog(TypedDict):
     payoff_matrix: PayoffMatrix
     players: List[Player]
     tournament_type: str 
-    num_tournaments: int
+    num_rounds: int
     plays: List[PlayLog]
 
 class Tournament:
@@ -80,7 +80,7 @@ class Tournament:
         return players_copies
 
 
-    def __create_match_log(self, game: Game, tournament_type: str, num_tournaments: int, tournament: int, 
+    def __create_match_log(self, game: Game, tournament_type: str, num_rounds: int, tournament: int, 
                                 player_row: Player, player_col: Player, player_row_action: int, player_col_action: int):
         
         if game.id not in self.match_logs:
@@ -90,7 +90,7 @@ class Tournament:
                 'payoff_matrix': game.payoff_matrix,
                 'players': [player.name for player in self.players],
                 'tournament_type': tournament_type,
-                'num_tournaments': num_tournaments,
+                'num_rounds': num_rounds,
                 'plays': list()
             }
         
@@ -324,7 +324,7 @@ class Tournament:
         clean_command: str = 'cls' if os.name == 'nt' else 'clear'
         os.system(clean_command) 
 
-    def show_ranking(self, num_rounds: int, total_rounds: int, time_between_ranking_shows: float):
+    def show_ranking(self, num_rounds: int, total_rounds: int, time_between_ranking_shows: float, game: Game):
         self.__clean_terminal()
 
         df: DataFrame = self.get_ranking()
@@ -332,13 +332,14 @@ class Tournament:
         output: str = df.to_string(index=False)
         max_columns_chars: int = output.find('\n') + 1
         
-        print(f'Round {num_rounds} of {total_rounds}\n'.center(max_columns_chars))
+        print(f'Round {num_rounds} of {total_rounds} for {game.type} (id={game.id})\n'.center(max_columns_chars))
         print(output)
 
         time.sleep(time_between_ranking_shows)
 
     def round_robin(self, matching_strategy: Literal['complete', 'random'], 
-                        num_tournaments: int = 1, 
+                        min_num_rounds: int = 1, 
+                        max_num_rounds: int = 1, 
                         time_between_ranking_shows: float = .5,
                         print_after: int = 100):
         '''
@@ -351,7 +352,7 @@ class Tournament:
 
                 List of games that the player will play.
 
-            num_tournaments: int
+            num_rounds: int
 
                 Number of tournaments that the players will play against each other each game.
 
@@ -370,12 +371,16 @@ class Tournament:
         tournament_type = f'round-robin [{matching_strategy}]'
         matchings = self.create_complete_matchings()   
 
-        rounds_count = 0
         print_after = abs(int(print_after))
-        num_rounds = len(self.games) * num_tournaments
-
+        total_rounds = 0
+        
         for game in self.games:
-            for tournament in range(1, num_tournaments + 1):
+
+            rounds_count = 0
+            num_rounds = randint(min_num_rounds, max_num_rounds)
+            total_rounds += num_rounds
+
+            for tournament in range(1, num_rounds + 1):
 
                 if matching_strategy == 'complete':
                     matchings = self.create_random_matchings()
@@ -415,15 +420,15 @@ class Tournament:
                     self.__update_player_score(game.id, player_row, player_row_payoff)
                     self.__update_player_score(game.id, player_col, player_col_payoff)
 
-                    self.__create_match_log(game, tournament_type, num_tournaments, tournament, player_row, 
+                    self.__create_match_log(game, tournament_type, num_rounds, tournament, player_row, 
                                             player_col, player_row_action, player_col_action)
 
                 if rounds_count%print_after == 0:
-                    self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows)
+                    self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows, game)
 
                 rounds_count += 1
 
-        self.show_ranking(rounds_count, num_rounds, 0)
+        self.show_ranking(total_rounds, total_rounds, 0, Game(-1, "All", False, tuple(), tuple(), tuple()))
 
 
 if __name__ == '__main__':
@@ -440,7 +445,7 @@ if __name__ == '__main__':
                             help='Folder where the games\' json is.')
 
     arg_parser.add_argument('-nt',
-                        '--num_tournaments',
+                        '--num_rounds',
                         type=int,
                         default=1,
                         help='Number of tournaments..')
@@ -470,7 +475,7 @@ if __name__ == '__main__':
     player_folder: Path = Path(args.player_folder) 
     game_folder: str = args.game_folder
 
-    num_tournaments: int = args.num_tournaments
+    num_rounds: int = args.num_rounds
     matching_strategy: str = args.matching_strategy
 
     output_file: str = args.output
@@ -482,7 +487,7 @@ if __name__ == '__main__':
     time_between_ranking_shows: float = args.time_between_ranking_shows
 
     tournament: Tournament = Tournament(players, games, log_path=log_path)
-    tournament.round_robin(matching_strategy, num_tournaments, time_between_ranking_shows)
+    tournament.round_robin(matching_strategy, num_rounds, time_between_ranking_shows)
 
     tournament.save_result(output_file)
     tournament.save_match_logs()

@@ -19,7 +19,8 @@
 
     "Tournament": {
 
-        "number_of_rounds": 1000,
+        "min_number_of_rounds": 1000,
+        "max_number_of_rounds": 1000,
 
         "matching_strategy": "complete",
 
