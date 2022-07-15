@@ -382,7 +382,7 @@ class Tournament:
 
             for tournament in range(1, num_rounds + 1):
 
-                if matching_strategy == 'complete':
+                if matching_strategy == 'random':
                     matchings = self.create_random_matchings()
 
                 for player_row, player_col in matchings:
