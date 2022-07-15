@@ -1,5 +1,4 @@
 from enum import Enum
-from nis import match
 from typing import Optional
 from typing_extensions import Literal
 from src.player.player import Player, MatchHistory, PayoffMatrix
