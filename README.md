@@ -78,8 +78,8 @@ If you want to change some parameters, like the type of tournament or remove som
 2. **files_to_ignore** -> games which should be ignored. For instance, if you don't want "games/stag_hunt.json" to take part in the tournament, you should add "stag_hunt.json" to this list.
 
 ### Tournament
-1. **min_number_of_rounds** -> minimum number of rounds of the tournament for one game (in a round-robin sense)
-2. **max_number_of_rounds** -> minimum number of rounds of the tournament for one game (in a round-robin sense)
+1. **min_number_of_rounds** -> minimum number of rounds of the tournament for one game. Each round is somewhat equivalent to the number of games a round-robin tournament would have.
+2. **max_number_of_rounds** -> minimum number of rounds of the tournament for one game. Each round is somewhat equivalent to the number of games a round-robin tournament would have.
 3. **matching_strategy** -> type of the tournament
     - "complete": round-robin 
         - each team face each other as row and as col player once for round

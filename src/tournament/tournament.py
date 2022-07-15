@@ -369,7 +369,8 @@ class Tournament:
         '''
 
         tournament_type = f'round-robin [{matching_strategy}]'
-        matchings = self.create_complete_matchings()   
+        matchings = self.create_complete_matchings()
+        rounds_multiplier = 2*(len(self.players) - 1) if matching_strategy == "random" else 1
 
         print_after = abs(int(print_after))
         total_rounds = 0
@@ -377,8 +378,8 @@ class Tournament:
         for game in self.games:
 
             rounds_count = 0
-            num_rounds = randint(min_num_rounds, max_num_rounds)
-            total_rounds += num_rounds
+            num_rounds = randint(min_num_rounds, max_num_rounds)*rounds_multiplier
+            total_rounds += num_rounds//rounds_multiplier
 
             for tournament in range(1, num_rounds + 1):
 
@@ -423,8 +424,8 @@ class Tournament:
                     self.__create_match_log(game, tournament_type, num_rounds, tournament, player_row, 
                                             player_col, player_row_action, player_col_action)
 
-                if rounds_count%print_after == 0:
-                    self.show_ranking(rounds_count, num_rounds, time_between_ranking_shows, game)
+                if rounds_count%(print_after*rounds_multiplier) == 0:
+                    self.show_ranking(rounds_count//rounds_multiplier, num_rounds//rounds_multiplier, time_between_ranking_shows, game)
 
                 rounds_count += 1
 
