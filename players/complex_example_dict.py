@@ -14,7 +14,7 @@ class ComplexExampleIf(Player):
 
     """
         An example a little more complicated than the rest, utilizing 
-        different strategies though the use of dictionaries.
+        different strategies through the use of dictionaries.
     """
 
     def __init__(self) -> None:
