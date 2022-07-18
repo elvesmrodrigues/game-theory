@@ -36,6 +36,16 @@ The tournament can, then, be run by
 python3 run_tournament.py
 ```
 
+## Auto set up
+
+If you don't want to clone the project and run it on your machine, you can run it with [replit](https://replit.com/), where everything is already set up for you:
+
+- Go to [https://replit.com/@gametheory/tournament](https://replit.com/@gametheory/tournament)
+- Click in the button **Fork Repl**
+- Click on the tab **Shell**
+- Run the tournament, by typing: `python3 run_tournament.py` 
+    > Prefer to use the shell. The RUN button does not work because of an internal dependency conflict in the site modules.
+
 ### Player
 
 In order to create a player strategy you need to create a .py file inheriting from the `Player` class (`src/player/player.py`) and to define your own `get_action(<params>)` method. All parameters you will receive are documented in the method definition. 
