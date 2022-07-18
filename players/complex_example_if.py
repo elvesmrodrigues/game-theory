@@ -36,7 +36,7 @@ class ComplexExampleIf(Player):
             # similarly payoff_matrix[0][0] is the payoff tuple (row, col) 
             # ... if row plays DEFECT and col players COOPERATE
         # since we can assume we are the row player, we take the first position
-        if payoff_matrix[0][0][0] <= 10*payoff_matrix[1][0][0]:
+        if 10*payoff_matrix[0][0][0] <= payoff_matrix[1][0][0]:
             return Action.DEFECT.value
 
         return Action.COOPERATE.value
