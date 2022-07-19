@@ -31,12 +31,14 @@
 
         "time_to_take_action": 0.01,
         
-        "time_between_ranking_shows": 0.5,
+        "time_between_ranking_shows": 0,
 
         "print_ranking_after_n_rounds": 100,
 
         "match_logs_dir": "logs/",
 
-        "ranking_filename": "ranking.csv"
+        "ranking_filename": "ranking.csv",
+
+        "debug_mode": true  
     }
 }
