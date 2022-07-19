@@ -24,7 +24,28 @@ source env/bin/activate
 
 Installing requirements
 ```
-python3 -m install -r requirements.txt
+python3 -m pip install -r requirements.txt
+
+
+Creating virtual environment (conda)
+```
+
+python -m venv env
+
+```
+
+Using created environment
+
+```
+
+env/Scripts/activate.bat
+
+```
+
+Installing requirements
+```
+
+python -m pip install -r requirements.txt
 ```
 
 ## How to use
