@@ -39,7 +39,7 @@ def import_class_from_from_file(
 ) -> Type:
     
     module: ModuleType = import_module(
-        "." + filename.strip(".py"), package
+        "." + filename.split(".py")[0], package
     )
     class_: Type = getattr(module, class_name)
 
