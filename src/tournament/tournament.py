@@ -288,6 +288,12 @@ class Tournament:
                 logging.error(f'The action of player {player.name} returned an invalid type {old_action_type} and could not be ' + \
                     f'converted to integer. Random action {action} was taken.')
 
+        if action < 0 or action > len(payoff_matrix) - 1:  
+            invalid_action = action
+            
+            action = randint(0, len(payoff_matrix)-1) 
+            logging.error(f'The action of player {player.name} returned the invalid action {invalid_action}. Random action {action} was taken.')
+            
         return action
 
     def save_result(self, output_file: str = None):
