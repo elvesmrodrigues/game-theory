@@ -286,7 +286,7 @@ class Tournament:
             except:
                 action = randint(0, len(payoff_matrix)-1) 
                 logging.error(f'The action of player {player.name} returned an invalid type {old_action_type} and could not be ' + \
-                    'converted to integer. Random action {action} was taken.')
+                    f'converted to integer. Random action {action} was taken.')
 
         return action
 
