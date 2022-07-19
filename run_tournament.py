@@ -24,7 +24,8 @@ def run_tournament(players, games, config):
         players = players,
         games = games,
         action_timeout = config["Tournament"]["time_to_take_action"],
-        log_path = config["Tournament"]["match_logs_dir"]
+        log_path = config["Tournament"]["match_logs_dir"],
+        debug_mode = config["Tournament"].get("debug_mode", True)
     )
 
     tournament.round_robin(

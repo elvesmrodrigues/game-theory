@@ -101,3 +101,4 @@ If you want to change some parameters, like the type of tournament or remove som
 6. **print_ranking_after_n_rounds** -> change if you want to print the ranking after every n rounds rather than after every round. 
 7. **match_logs_dir** -> directory in which all matches' results will be saved
 8. **ranking_filename** -> filename of the final ranking for a tournament (it can overwrite itself for different tournaments, so be careful)
+9. **debug_mode** -> Boolean indicating whether logs should be shown on the screen or not.

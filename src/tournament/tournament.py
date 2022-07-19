@@ -51,7 +51,8 @@ class Tournament:
     def __init__(self, players: List[Player], 
                     games: List[Game],
                     action_timeout: float = 1.0, 
-                    log_path: str = 'logs/') -> None:
+                    log_path: str = 'logs/',
+                    debug_mode: bool = True) -> None:
 
         self.id: str = str(uuid.uuid4())
 
@@ -68,6 +69,7 @@ class Tournament:
         self.match_logs: Dict[str, MatchLog] = dict()
         self.log_path: str = log_path if log_path[-1] == '/' else log_path + '/'
 
+        self.debug_mode = debug_mode
 
     def __create_robot_players(self, players: List[Player]) -> List[Player]:
 
@@ -259,7 +261,8 @@ class Tournament:
 
         '''
 
-        action = None
+        action = 0
+
         try:
             args = (game_type, payoff_matrix, adversary_id, match_history, row_or_col)
             action = func_timeout(timeout=self.action_timeout, func=player.get_action, args=args)
@@ -267,15 +270,38 @@ class Tournament:
         except FunctionTimedOut:
             action = randint(0, len(payoff_matrix)-1) 
 
-            logging.error(f'The action to be played by {player.name} was not returned in' \
-                            f' {self.action_timeout} seconds and was terminated. The random' \
-                            f' action {action} was taken.')
+            if self.debug_mode:
+                logging.error(f'The action to be played by {player.name} was not returned in' \
+                                f' {self.action_timeout} seconds and was terminated. The random' \
+                                f' action {action} was taken.')
 
         except Exception as e:
             action = randint(0, len(payoff_matrix)-1) 
-            logging.error(f'The action of player {player.name} generated the following exception' + \
-                          f'and the random action {action} was taken: {e}')
+            if self.debug_mode:
+                logging.error(f'The action of player {player.name} generated the following exception: {e} ' + \
+                            f'and the random action {action} was taken.')
 
+        if type(action) is not int:
+            old_action_type = type(action)
+
+            try:
+                action = int(action)
+
+            except:
+                action = randint(0, len(payoff_matrix)-1) 
+                
+                if self.debug_mode:
+                    logging.error(f'The action of player {player.name} returned an invalid type {old_action_type} and could not be ' + \
+                        f'converted to integer. Random action {action} was taken.')
+
+        if action < 0 or action > len(payoff_matrix) - 1:  
+            invalid_action = action
+            
+            action = randint(0, len(payoff_matrix)-1) 
+
+            if self.debug_mode:
+                logging.error(f'The action of player {player.name} returned the invalid action {invalid_action}. Random action {action} was taken.')
+            
         return action
 
     def save_result(self, output_file: str = None):
