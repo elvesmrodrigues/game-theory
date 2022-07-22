@@ -11,6 +11,8 @@ The main use case should be simple 2-player games in which each player has two a
 
 In this repository we use Python 3.7
 
+### Python venv
+
 Creating virtual environment
 ```
 python3 -m venv env
@@ -25,36 +27,26 @@ source env/bin/activate
 Installing requirements
 ```
 python3 -m pip install -r requirements.txt
-
-
-Creating virtual environment (conda)
 ```
 
-python -m venv env
+### Conda
 
+Creating virtual environment
+
+```
+python -m venv env
 ```
 
 Using created environment
 
 ```
-
 env/Scripts/activate.bat
-
 ```
 
 Installing requirements
-```
 
+```
 python -m pip install -r requirements.txt
-```
-
-## How to use
-
-Simply put, you can create files to represent different player strategies and define what game(s) they will play. 
-
-The tournament can, then, be run by
-```
-python3 run_tournament.py
 ```
 
 ## Auto set up
@@ -66,6 +58,16 @@ If you don't want to clone the project and run it on your machine, you can run i
 - Click on the tab **Shell**
 - Run the tournament, by typing: `python3 run_tournament.py` 
     > Prefer to use the shell. The RUN button does not work because of an internal dependency conflict in the site modules.
+
+
+## How to use
+
+Simply put, you can create files to represent different player strategies and define what game(s) they will play. 
+
+The tournament can, then, be run by
+```
+python3 run_tournament.py
+```
 
 ### Player
 
